@@ -1,8 +1,8 @@
-import { createStore, combineReducers } from "redux";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import { createStore, combineReducers } from 'redux';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-import rootUser from "./user";
+import rootUser from './user';
 // import rootAuth from "./auth";
 
 // const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
@@ -10,21 +10,22 @@ import rootUser from "./user";
 function configureStore(initialState = {}) {
   const reducer = combineReducers({
     // auth: persistReducer({ key: "auth", storage }, rootAuth),
-    user: persistReducer({ key: "user", storage }, rootUser),
+    user: persistReducer({ key: 'user', storage }, rootUser),
   });
 
   const store = createStore(
     persistReducer(
       {
-        key: "root",
+        key: 'root',
         storage,
-        whitelist: ["auth"],
+        whitelist: ['auth'],
       },
-      reducer
+      reducer,
     ),
 
     initialState,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    window.__REDUX_DEVTOOLS_EXTENSION__ &&
+      window.__REDUX_DEVTOOLS_EXTENSION__(),
   );
 
   const persistor = persistStore(store, null, () => {

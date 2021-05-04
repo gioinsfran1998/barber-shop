@@ -4,13 +4,13 @@ const defaultState = {
 
 const userAction = (state = defaultState, action = {}) => {
   switch (action.type) {
-    case "LOGIN_SUCCESS":
+    case 'LOGIN_SUCCESS':
       return {
         ...state,
         user: action.payload,
       };
 
-    case "LOGOUT_SUCCESS":
+    case 'LOGOUT_SUCCESS':
       return {
         ...state,
         user: null,
@@ -23,14 +23,14 @@ const userAction = (state = defaultState, action = {}) => {
 
 export const loginUser = (value) => {
   return {
-    type: "LOGIN_SUCCESS",
+    type: 'LOGIN_SUCCESS',
     payload: value,
   };
 };
 
 export const logoutUser = (value) => {
   return {
-    type: "LOGOUT_SUCCESS",
+    type: 'LOGOUT_SUCCESS',
     payload: null,
   };
 };
