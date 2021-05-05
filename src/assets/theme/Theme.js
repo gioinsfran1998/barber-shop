@@ -9,10 +9,10 @@ const Theme = ({ children }) => {
 		spacing: 4,
 		palette: {
 			primary: {
-				main: '#f9a825',
+				main: '#3BC183',
 			},
 			secondary: {
-				main: '#424242',
+				main: '#2A2D34',
 			},
 		},
 	});
