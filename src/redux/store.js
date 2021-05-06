@@ -3,10 +3,11 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import rootUser from './user';
-// import rootAuth from "./auth";
+import rootAuth from './auth';
 
 function configureStore(initialState = {}) {
 	const reducer = combineReducers({
+		auth: persistReducer({ key: 'auth', storage }, rootAuth),
 		user: persistReducer({ key: 'user', storage }, rootUser),
 	});
 
@@ -15,7 +16,7 @@ function configureStore(initialState = {}) {
 			{
 				key: 'root',
 				storage,
-				// whitelist: ['auth'],
+				whitelist: ['auth'],
 			},
 			reducer,
 		),

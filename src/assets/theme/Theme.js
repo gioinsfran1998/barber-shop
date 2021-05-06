@@ -14,6 +14,9 @@ const Theme = ({ children }) => {
 			secondary: {
 				main: '#2A2D34',
 			},
+			text: {
+				primary: '#fff',
+			},
 		},
 	});
 

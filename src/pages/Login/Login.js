@@ -10,11 +10,13 @@ import {
 	Avatar,
 	IconButton,
 } from '@material-ui/core';
-import { red } from '@material-ui/core/colors';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import loginImage from '../../assets/images/barber2.jpg';
+import { auth, db, firebase } from '../../firebase';
+import loginImage from '../../assets/images/barber6.jpg';
 import gmailIcon from '../../assets/images/logingoogle.png';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../redux/user';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -50,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	form: {
 		// padding: '10px',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
 		width: '100%',
 		height: '100%',
 	},
@@ -61,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
 		color: '#fff',
 	},
 	buttonLogin: {
-		marginTop: '20px',
+		marginTop: '30px',
 		color: '#fff',
 	},
 	avatarGmail: {
@@ -76,24 +81,72 @@ const useStyles = makeStyles((theme) => ({
 	},
 	buttonGmail: {
 		color: '#f12a13',
-		marginTop: '20px',
+		marginTop: '25px',
+		marginBottom: '10px',
 		// display: 'flex',
 		// height: '50px',
 		// width: '50px',
 	},
 }));
 
-const Login = () => {
+export const getUsersRole = async (email) => {
+	const data = await db.collection('usersRole').get();
+	try {
+		const arrayData = data.docs.map((doc) => ({
+			id: doc.id,
+			...doc.data(),
+		}));
+		console.log(arrayData);
+		const authorized = arrayData
+			.map((doc) => doc)
+			.filter(function (user) {
+				return user.email === email;
+			})[0];
+		console.log('autorizado', authorized, email);
+		return authorized;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const Login = (props) => {
 	const classes = useStyles();
-	const isAuthorized = true;
+	const dispatch = useDispatch();
+
+	const onLogin = () => {
+		const provider = new firebase.auth.GoogleAuthProvider();
+		firebase
+			.auth()
+			.signInWithPopup(provider)
+			.then(async (result) => {
+				const { displayName, email, photoURL, uid } = result.user;
+				const isAuthorized = await getUsersRole(email);
+
+				if (isAuthorized) {
+					if (isAuthorized.role === 'admin' && isAuthorized.authorization) {
+						dispatch(loginUser({ displayName, email, photoURL, uid }));
+					} else {
+						console.log('usuario no autorizado.');
+						// handleClickPopUp("error", "Usuario no autorizado");
+					}
+				} else {
+					console.log('user no exist, cadastrar pfv');
+					// handleClickPopUp("error", "No existe usuario");
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
 	return (
 		<div className={classes.root}>
 			<Container component='main' maxWidth='sm' className={classes.container}>
 				<Grid container spacing={0}>
-					<Grid item sm={7} className={classes.imgContainer}>
+					<Grid item sm={7} xs={0} className={classes.imgContainer}>
 						<Box className={classes.imgLogin} />
 					</Grid>
-					<Grid item sm={5} className={classes.formContainer}>
+					<Grid item sm={5} xs={12} className={classes.formContainer}>
 						<form className={classes.form} noValidate>
 							<TextField
 								className={classes.textField}
@@ -121,22 +174,6 @@ const Login = () => {
 								id='password'
 								autoComplete='current-password'
 							/>
-							<FormControlLabel
-								style={{ marginTop: '13px', color: '#fafafa' }}
-								control={<Checkbox value='remember' color='primary' />}
-								label='Remember me'
-							/>
-							<Button
-								className={classes.buttonGmail}
-								variant='contained'
-								fullWidth
-								startIcon={
-									<img src={gmailIcon} className={classes.avatarGmail} />
-								}
-								// onClick={() => onLogin()}
-							>
-								Login Gmail
-							</Button>
 
 							{/* <IconButton>
 								<img src={gmailIcon} className={classes.avatarGmail} />
@@ -150,6 +187,17 @@ const Login = () => {
 								className={classes.buttonLogin}
 							>
 								Sign In
+							</Button>
+							<Button
+								className={classes.buttonGmail}
+								variant='contained'
+								fullWidth
+								startIcon={
+									<img src={gmailIcon} className={classes.avatarGmail} />
+								}
+								onClick={() => onLogin()}
+							>
+								Login Gmail
 							</Button>
 						</form>
 					</Grid>
