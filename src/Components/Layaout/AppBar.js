@@ -88,10 +88,10 @@ const useStyles = makeStyles((theme) => ({
 			// width: `calc(100% - ${240}px)`,
 			// marginLeft: 240,
 		},
-		color: '#fafafa',
+		color: '#faafa',
 		boxShadow: 'none',
 		// backgroundColor:
-		backgroundColor: '#0c0c0c',
+		backgroundColor: theme.palette.primary.main,
 		//   theme.palette.type === "dark"
 		//     ? theme.palette.background.dark
 		//     : theme.palette.primary.main,

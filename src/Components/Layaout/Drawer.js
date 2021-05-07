@@ -28,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
 		width: '150px',
 	},
 	drawerPaper: {
-		color: '#fafafa',
+		// color: '#fafafa',
 		// backgroundColor:
 		//   theme.palette.type === "dark"
 		//     ? theme.palette.background.paper
 		//     : theme.palette.secondary.main,
-		backgroundColor: theme.palette.secondary.main,
+		backgroundColor: '#fafafa',
 		width: 240,
 		[theme.breakpoints.up('md')]: {
 			marginTop: theme.mixins.toolbar.minHeight,

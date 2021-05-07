@@ -9,14 +9,19 @@ const Theme = ({ children }) => {
 		spacing: 4,
 		palette: {
 			primary: {
-				main: '#3BC183',
+				main: '#3f51b5',
 			},
 			secondary: {
-				main: '#2A2D34',
+				main: '#fafafa',
 			},
 			text: {
-				primary: '#fff',
+				primary: '#0C0C0C',
 			},
+			background: {
+				// paper: '#e8e8e8',
+				paper: '#fafafa',
+			},
+			divider: '#b6b6b6',
 		},
 	});
 

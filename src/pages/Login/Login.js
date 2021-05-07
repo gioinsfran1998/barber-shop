@@ -28,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
 		alignItems: 'center',
 	},
 	container: {
-		backgroundColor: theme.palette.secondary.main,
+		backgroundColor: '#eeefff',
 		padding: 0,
 		borderRadius: '6px',
-		boxShadow: '0px 0px 12px 0px #000',
+		// boxShadow: '0px 0px 5px 0px #c4c4c4',
 	},
 	imgContainer: {
 		height: '400px',
@@ -58,16 +58,9 @@ const useStyles = makeStyles((theme) => ({
 		width: '100%',
 		height: '100%',
 	},
-	textField: {
-		backgroundColor: theme.palette.secondary.light,
-		borderRadius: '5px',
-	},
-	textFieldLabel: {
-		color: '#fff',
-	},
+
 	buttonLogin: {
 		marginTop: '30px',
-		color: '#fff',
 	},
 	avatarGmail: {
 		// display: 'flex',

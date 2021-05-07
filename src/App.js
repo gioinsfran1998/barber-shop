@@ -1,6 +1,7 @@
 import Routes from './routes';
 import { makeStyles } from '@material-ui/core';
 import Theme from './assets/theme/Theme';
+import { SnackbarProvider } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -15,7 +16,9 @@ function App() {
 	return (
 		<div className={classes.root}>
 			<Theme>
-				<Routes />
+				<SnackbarProvider>
+					<Routes />
+				</SnackbarProvider>
 			</Theme>
 		</div>
 	);

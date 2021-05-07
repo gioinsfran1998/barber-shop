@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik } from 'formik';
+
 import * as Yup from 'yup';
 import {
 	Grid,
@@ -12,36 +13,36 @@ import {
 	FormControlLabel,
 	Checkbox,
 	ButtonBase,
-	CardMedia,
 	MenuItem,
+	CardMedia,
 } from '@material-ui/core';
-
-import { useSnackbar } from 'notistack';
 import { useDebouncedCallback } from 'use-debounce';
-import { db, storage } from '../../firebase';
+import { firebase, storage } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
-	paperContainer: {
-		padding: theme.spacing(6),
+	root: {
+		// padding: theme.spacing(6),
+		'& .MuiTextField-root': {
+			// paddingBottom: theme.spacing(4),
+			// marginTop: "10px",
+			// width: "100%",
+		},
 	},
-	boxPaperContainer: {
-		display: 'flex',
-		// width: '500px',
-		// width: '100%',
-		// maxWidth: '300px',
+	paperContainer: {
+		padding: theme.spacing(4),
 	},
 	paperImgContainer: {
-		margin: '12px',
-		maxWidth: '300px',
-		width: '100%',
-		height: '250px',
 		display: 'flex',
-		flexDirection: 'column',
 		justifyContent: 'space-evenly',
-		alignItems: 'center',
-		// padding: '5px',
-		// width: '100%',
+		alignContent: 'center',
+		flexWrap: 'wrap',
+		minHeight: '180px',
+		width: '100%',
+		maxWidth: '400px',
+		maxHeight: '250px',
+		padding: '5px',
 	},
 	button: {
 		width: '110px',
@@ -53,14 +54,11 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 	cardImageContainer: {
-		margin: '10px',
 		borderRadius: '50%',
 		borderColor: theme.palette.divider,
 		border: '2px solid',
-		// padding: '5px'
-
-		width: '150px',
-		height: '150px',
+		width: '100px',
+		height: '100px',
 	},
 	input: {
 		display: 'none',
@@ -70,6 +68,8 @@ const useStyles = makeStyles((theme) => ({
 		opacity: '0.4',
 	},
 }));
+
+const db = firebase.firestore();
 
 const cargos = [
 	{
@@ -105,19 +105,21 @@ const rangos = [
 	},
 ];
 
-const Add = () => {
+const Edit = ({ history }) => {
 	const classes = useStyles();
 	const debounce = useDebouncedCallback((fn) => fn(), 300);
+	const [loading, setLoading] = useState(null);
+	const [authorized, setAuthorized] = React.useState(false);
+
 	const [fileUrl, setFileUrl] = React.useState(null);
 	const [fileLocal, setFileLocal] = React.useState(null);
+
 	const { enqueueSnackbar } = useSnackbar();
-	const [loading, setLoading] = useState(false);
-	const [authorized, setAuthorized] = React.useState(false);
 
 	const onFileChange = async (e) => {
 		const file = e.target.files[0];
 		const storageRef = storage.ref();
-		const fileRef = storageRef.child(file && file.name);
+		const fileRef = storageRef.child(file.name);
 		setFileUrl(file);
 		setFileLocal(URL.createObjectURL(file));
 	};
@@ -170,32 +172,54 @@ const Add = () => {
 		),
 	});
 
-	const handleChangeAutorized = (event) => {
+	const {
+		nombre,
+		role,
+		id,
+		estado,
+		email,
+		cargo,
+		apellido,
+		autorizacion,
+		ciudad,
+		direccion1,
+		direccion2,
+		fechaNacimiento,
+		telefono,
+		docIdentidad,
+		departamento,
+		imagen,
+	} = history.location.state;
+
+	useEffect(() => {
+		if (autorizacion) {
+			setAuthorized(autorizacion);
+		}
+	}, []);
+
+	const handleChangeChecked = (event) => {
 		setAuthorized(event.target.checked);
 	};
 
 	const handleClickPopUp = (variant, message) => {
+		console.log(variant, 'variant');
 		enqueueSnackbar(message, { variant });
 	};
 
-	const handleAddUser = (
-		{
-			nombre,
-			apellido,
-			email,
-			role,
-			cargo,
-			ciudad,
-			direccion1,
-			direccion2,
-			fechaNacimiento,
-			docIdentidad,
-			telefono,
-			departamento,
-			imagen,
-		},
-		actions,
-	) => {
+	const handleEdit = ({
+		nombre,
+		apellido,
+		email,
+		role,
+		cargo = null,
+		ciudad,
+		direccion1,
+		direccion2,
+		fechaNacimiento,
+		docIdentidad,
+		telefono,
+		departamento,
+	}) => {
 		debounce(async () => {
 			const storageRef = storage.ref();
 			const fileRef = storageRef.child(email);
@@ -205,7 +229,8 @@ const Add = () => {
 
 			await db
 				.collection('usersRole')
-				.add({
+				.doc(id)
+				.update({
 					nombre,
 					apellido,
 					telefono,
@@ -217,15 +242,15 @@ const Add = () => {
 					departamento,
 					email,
 					role,
-					cargo: cargo && cargo,
+					cargo,
 					autorizacion: authorized,
 					imagen: refImage,
 				})
 				.then(() => {
-					handleClickPopUp('success', 'Usuario agregado con exito');
-					actions.resetForm({});
-					setFileLocal(null);
 					setLoading(false);
+					history.push('/usuarios/lista');
+					console.log('Ok Editado!!!');
+					handleClickPopUp('success', 'Usuario editado con éxito');
 				})
 				.catch(() => {
 					console.log('CATCHH');
@@ -238,136 +263,154 @@ const Add = () => {
 		<div>
 			<Formik
 				initialValues={{
-					nombre: '',
-					apellido: '',
-					email: '',
-					role: '',
-					cargo: '',
-					ciudad: '',
-					direccion1: '',
-					direccion2: '',
-					fechaNacimiento: '',
-					telefono: '',
-					docIdentidad: '',
-					departamento: '',
-					autorizacion: false,
+					nombre,
+					apellido,
+					email,
+					role,
+					estado,
+					cargo,
+					ciudad,
+					direccion1,
+					direccion2,
+					fechaNacimiento,
+					telefono,
+					docIdentidad,
+					departamento,
 				}}
-				onSubmit={(values, actions) => {
+				onSubmit={(values, { resetForm }) => {
 					setLoading(true);
-					handleAddUser(values, actions);
+					handleEdit(values);
 				}}
 				validateOnChange={false}
 				validateOnBlur={false}
 				validationSchema={validation}
 			>
-				{({ values, errors, handleSubmit, handleChange }) => {
+				{({ values, errors, handleSubmit, handleChange, dirty }) => {
 					return (
 						<form onSubmit={handleSubmit} className={classes.root}>
 							<Paper variant='outlined' className={classes.paperContainer}>
 								<Grid
 									container
-									justify='flex-start'
+									justify='space-evenly'
 									alignItems='center'
 									spacing={1}
 								>
 									<Grid item xs={12}>
 										<Box pl={5} p={3} display='flex'>
 											<Typography variant='h5' color='initial'>
-												Agregar Usuario
+												Editar Usuario
 											</Typography>
 										</Box>
 									</Grid>
-									<Grid item container xs={12} justify='center'>
-										{/* <Box p={4} className='boxPaperContainer'> */}
-										<Paper
-											variant='outlined'
-											className={classes.paperImgContainer}
-										>
-											<Box>
-												<input
-													accept='image/*'
-													className={classes.input}
-													id='contained-button-file'
-													multiple
-													type='file'
-													// value={values.imagen}
-													onChange={onFileChange}
-												/>
-												<label htmlFor='contained-button-file'>
-													<ButtonBase
-														variant='contained'
-														color='primary'
-														component='span'
-													>
-														<CardMedia
-															className={classes.cardImageContainer}
-															image={fileLocal}
-															title='Live from space album cover'
-														/>
-														<PhotoCamera className={classes.imagePhoto} />
-													</ButtonBase>
-												</label>
-											</Box>
-											<FormControlLabel
-												control={
-													<Checkbox
-														authorized={authorized}
-														onChange={handleChangeAutorized}
-														color='primary'
+									<Grid item sm={6}>
+										<Box p={4} display='flex' justifyContent='center'>
+											<Paper
+												variant='outlined'
+												className={classes.paperImgContainer}
+											>
+												<Box>
+													<input
+														accept='image/*'
+														className={classes.input}
+														id='contained-button-file'
+														multiple
+														type='file'
+														onChange={onFileChange}
 													/>
-												}
-												label='Activo'
-											/>
-										</Paper>
-										{/* </Box> */}
-									</Grid>
+													<label htmlFor='contained-button-file'>
+														<ButtonBase
+															variant='contained'
+															color='primary'
+															component='span'
+														>
+															{fileLocal && (
+																<CardMedia
+																	className={classes.cardImageContainer}
+																	image={fileLocal}
+																	title='Live from space album cover'
+																/>
+															)}
 
-									<Grid item lg={4} sm={6} xs={12}>
-										<Box p={3}>
-											<TextField
-												label='Nombres'
-												fullWidth
-												variant='outlined'
-												required
-												name='nombre'
-												id='nombre'
-												type='text'
-												value={values.nombre}
-												error={errors.nombre}
-												onChange={handleChange}
-											/>
+															{!fileLocal && (
+																<CardMedia
+																	className={classes.cardImageContainer}
+																	image={imagen}
+																	title='Live from space album cover'
+																/>
+															)}
+
+															<PhotoCamera className={classes.imagePhoto} />
+														</ButtonBase>
+													</label>
+												</Box>
+												<FormControlLabel
+													control={
+														<Checkbox
+															checked={authorized}
+															onChange={handleChangeChecked}
+															color='primary'
+														/>
+													}
+													label='Activo'
+												/>
+											</Paper>
 										</Box>
 									</Grid>
-									<Grid item lg={4} sm={6} xs={12}>
-										<Box p={3}>
-											<TextField
-												label='Apellidos'
-												fullWidth
-												variant='outlined'
-												required
-												name='apellido'
-												id='apellido'
-												type='text'
-												value={values.apellido}
-												error={errors.apellido}
-												onChange={handleChange}
-											/>
-										</Box>
+									<Grid
+										item
+										container
+										sm={6}
+										// spacing={6}
+										justify='flex-end'
+										alignItems='center'
+									>
+										<Grid item sm={12} xs={12}>
+											<Box p={3}>
+												<TextField
+													fullWidth
+													// // defaultValue="Nombres"
+													variant='outlined'
+													label='Nombres'
+													required
+													name='nombre'
+													id='nombre'
+													type='text'
+													value={values.nombre}
+													error={errors.nombre}
+													onChange={handleChange}
+												/>
+											</Box>
+										</Grid>
+										<Grid item sm={12} xs={12} style={{ paddingTop: '3px' }}>
+											<Box p={3}>
+												<TextField
+													fullWidth
+													// defaultValue="Apellidos"
+													variant='outlined'
+													label='Apellidos'
+													required
+													name='apellido'
+													id='apellido'
+													// defaultValue="Borges Pereira"
+													type='text'
+													value={values.apellido}
+													error={errors.apellido}
+													onChange={handleChange}
+												/>
+											</Box>
+										</Grid>
 									</Grid>
 
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												className={classes.textFieldAdd}
-												InputLabelProps={{
-													className: classes.textFieldInputProps,
-												}}
 												id='email'
 												name='email'
 												required
 												fullWidth
 												variant='outlined'
 												label='Email'
+												disabled
 												value={values.email}
 												error={errors.email}
 												onChange={handleChange}
@@ -377,16 +420,13 @@ const Add = () => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												className={classes.textFieldAdd}
-												InputLabelProps={{
-													className: classes.textFieldInputProps,
-												}}
 												id='telefono'
 												name='telefono'
 												required
 												fullWidth
 												variant='outlined'
 												label='Telefono'
+												// defaultValue="(0993) 534536"
 												value={values.telefono}
 												error={errors.telefono}
 												onChange={handleChange}
@@ -396,16 +436,13 @@ const Add = () => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												className={classes.textFieldAdd}
-												InputLabelProps={{
-													className: classes.textFieldInputProps,
-												}}
 												id='departamento'
 												name='departamento'
 												required
 												fullWidth
 												variant='outlined'
 												label='Departamento'
+												// defaultValue="Alto Parana"
 												value={values.departamento}
 												error={errors.departamento}
 												onChange={handleChange}
@@ -415,16 +452,13 @@ const Add = () => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												className={classes.textFieldAdd}
-												InputLabelProps={{
-													className: classes.textFieldInputProps,
-												}}
 												id='ciudad'
 												name='ciudad'
 												required
 												fullWidth
 												variant='outlined'
 												label='Ciudad'
+												// defaultValue="Ciudad del Este"
 												value={values.ciudad}
 												error={errors.ciudad}
 												onChange={handleChange}
@@ -434,16 +468,13 @@ const Add = () => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												className={classes.textFieldAdd}
-												InputLabelProps={{
-													className: classes.textFieldInputProps,
-												}}
 												id='direccion1'
 												name='direccion1'
 												required
 												fullWidth
 												variant='outlined'
 												label='Direccion1'
+												// defaultValue="Barrio los cedrales"
 												value={values.direccion1}
 												error={errors.direccion1}
 												onChange={handleChange}
@@ -453,16 +484,13 @@ const Add = () => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												className={classes.textFieldAdd}
-												InputLabelProps={{
-													className: classes.textFieldInputProps,
-												}}
 												id='direccion2'
 												name='direccion2'
 												required
 												fullWidth
 												variant='outlined'
 												label='Direccion2'
+												// defaultValue="Calle Brasil, numero #45"
 												value={values.direccion2}
 												error={errors.direccion2}
 												onChange={handleChange}
@@ -478,13 +506,14 @@ const Add = () => {
 												fullWidth
 												variant='outlined'
 												label='Numero de C.I.'
+												// defaultValue="3.133.345"
 												value={values.docIdentidad}
 												error={errors.docIdentidad}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
-									<Grid item lg={6} sm={6} xs={12}>
+									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
 												id='fechaNacimiento'
@@ -493,59 +522,61 @@ const Add = () => {
 												fullWidth
 												variant='outlined'
 												label='Fecha de Nacimiento'
+												// defaultValue="21/02/1994"
 												value={values.fechaNacimiento}
 												error={errors.fechaNacimiento}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
-
-									<Grid justify='flex-start' item lg={6} sm={6} xs={12}>
-										<Box p={3}>
-											<TextField
-												id='role'
-												name='role'
-												required={authorized}
-												fullWidth
-												variant='outlined'
-												label='Rango'
-												value={values.role}
-												error={errors.role}
-												onChange={handleChange}
-												disabled={!authorized}
-												select
-											>
-												{rangos.map((option) => (
-													<MenuItem key={option.value} value={option.value}>
-														{option.label}
-													</MenuItem>
-												))}
-											</TextField>
-										</Box>
+									<Grid item container xs={12} justify='center'>
+										<Grid item sm={6} xs={12}>
+											<Box p={3}>
+												<TextField
+													id='role'
+													name='role'
+													required={authorized}
+													fullWidth
+													variant='outlined'
+													label='Rango'
+													value={values.role}
+													error={errors.role}
+													onChange={handleChange}
+													disabled={!authorized}
+													select
+												>
+													{rangos.map((option) => (
+														<MenuItem key={option.value} value={option.value}>
+															{option.label}
+														</MenuItem>
+													))}
+												</TextField>
+											</Box>
+										</Grid>
 									</Grid>
 
-									<Grid item container justify='flex-start'>
-										<Box p={5} display='flex' justifyContent='center'>
-											<Button
-												variant='contained'
-												color='secondary'
-												className={classes.button}
-												// onClick={() => handleClose()}
-											>
-												Cancelar
-											</Button>
-											<Button
-												variant='contained'
-												color='primary'
-												type='submit'
-												onClick={handleSubmit}
-												disabled={loading}
-												className={classes.button}
-											>
-												Agregar
-											</Button>
-										</Box>
-									</Grid>
+									<Box p={5} display='flex' justifyContent='center'>
+										<Button
+											// fullWidth
+											variant='contained'
+											color='secondary'
+											className={classes.button}
+											// onClick={() => handleClose()}
+										>
+											Cancelar
+										</Button>
+										<Button
+											// fullWidth
+											variant='contained'
+											color='primary'
+											type='submit'
+											onClick={handleSubmit}
+											disabled={loading}
+											className={classes.button}
+										>
+											Editar
+										</Button>
+									</Box>
 								</Grid>
 							</Paper>
 						</form>
@@ -556,4 +587,4 @@ const Add = () => {
 	);
 };
 
-export default Add;
+export default Edit;

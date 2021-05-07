@@ -62,7 +62,7 @@ const Layout = (props) => {
 		{
 			text: 'Home',
 			route: '/Home',
-			icon: <HomeIcon style={{ color: '#fafafa' }} />,
+			icon: <HomeIcon />,
 			onClick: () => {
 				history.push('/home');
 				setMobileOpen(false);
@@ -89,9 +89,9 @@ const Layout = (props) => {
 				},
 				{
 					text: 'Agregar',
-					route: '/usuarios/agregar',
+					route: '/users/add',
 					onClick: () => {
-						history.push('/usuarios/agregar');
+						history.push('/users/add');
 						setMobileOpen(false);
 					},
 				},

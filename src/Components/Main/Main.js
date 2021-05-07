@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
 		// backgroundColor: theme.palette.secondary.light,
 	},
 	backgroundMain: {
-		backgroundColor: theme.palette.secondary.light,
+		backgroundColor: '#fafafa',
 		display: 'flex',
 		width: '100%',
 	},

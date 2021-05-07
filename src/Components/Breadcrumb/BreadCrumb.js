@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(2),
 	},
 	breadcrumb: {
-		color: '#fafafa',
+		color: theme.palette.primary.main,
 	},
 }));
 

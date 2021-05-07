@@ -20,19 +20,20 @@ import SearchIcon from '@material-ui/icons/Search';
 import { db } from '../../firebase';
 
 const useStyles = makeStyles((theme) => ({
-	// root: {
-	// 	'& .super-app-theme--header': {
-	// 		backgroundColor: '#c1c1c1',
-	// 	},
-	// },
+	root: {
+		'& .super-app-theme--header': {
+			backgroundColor: theme.palette.primary.light,
+			color: '#fafafa',
+		},
+	},
 
 	rootPaper: {
 		padding: theme.spacing(6),
-		backgroundColor: 'transparent',
-		borderColor: '#fafafa',
+		// backgroundColor: 'transparent',
+		// borderColor: '#fafafa',
 	},
 	dataGrid: {
-		border: 'none',
+		border: '1px solid red',
 	},
 	boxCenter: {
 		[theme.breakpoints.down('xs')]: {
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 	textFieldSearch: {
 		'& .MuiOutlinedInput-root': {
 			'& fieldset': {
-				borderColor: '#fafafa',
+				// borderColor: '#fafafa',
 			},
 		},
 	},
@@ -110,6 +111,7 @@ const List = ({ history }) => {
 			headerName: 'Apellidos',
 			flex: isDesktop ? 1 : 0,
 			headerAlign: 'center',
+			headerClassName: 'super-app-theme--header',
 			align: 'center',
 		},
 		{
@@ -151,16 +153,11 @@ const List = ({ history }) => {
 					<IconButton
 						aria-label='delete'
 						onClick={() => history.push('/users/detail', params.row)}
-						style={{ color: '#fafafa' }}
 					>
 						<InfoRounded />
 					</IconButton>
 
-					<IconButton
-						aria-label='edit'
-						style={{ color: '#fafafa' }}
-						onClick={() => handleEditUser(params)}
-					>
+					<IconButton aria-label='edit' onClick={() => handleEditUser(params)}>
 						<EditIcon />
 					</IconButton>
 				</strong>
@@ -176,7 +173,6 @@ const List = ({ history }) => {
 				className={classes.boxCenter}
 			>
 				<Button
-					style={{ color: '#fafafa' }}
 					color='primary'
 					variant='contained'
 					onClick={() => history.push('/users/add')}
@@ -211,7 +207,7 @@ const List = ({ history }) => {
 					/>
 				</Box>
 
-				<div style={{ height: 'auto', width: '100%' }}>
+				<div style={{ height: 'auto', width: '100%' }} className={classes.root}>
 					<DataGrid
 						rows={dataSearched.length > 0 ? dataSearched : users}
 						columns={columns}
@@ -219,7 +215,7 @@ const List = ({ history }) => {
 						checkboxSelection={false}
 						autoHeight={true}
 						loading={users.length === 0 || loading}
-						className={classes.dataGrid}
+						// className={classes.dataGrid}
 					/>
 				</div>
 			</Paper>
