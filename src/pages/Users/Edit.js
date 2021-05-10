@@ -15,6 +15,7 @@ import {
 	ButtonBase,
 	MenuItem,
 	CardMedia,
+	Divider,
 } from '@material-ui/core';
 import { useDebouncedCallback } from 'use-debounce';
 import { firebase, storage } from '../../firebase';
@@ -22,27 +23,21 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		// padding: theme.spacing(6),
-		'& .MuiTextField-root': {
-			// paddingBottom: theme.spacing(4),
-			// marginTop: "10px",
-			// width: "100%",
-		},
-	},
 	paperContainer: {
-		padding: theme.spacing(4),
+		padding: theme.spacing(6),
+	},
+	boxPaperContainer: {
+		display: 'flex',
 	},
 	paperImgContainer: {
-		display: 'flex',
-		justifyContent: 'space-evenly',
-		alignContent: 'center',
-		flexWrap: 'wrap',
-		minHeight: '180px',
+		margin: '12px',
+		maxWidth: '300px',
 		width: '100%',
-		maxWidth: '400px',
-		maxHeight: '250px',
-		padding: '5px',
+		height: '250px',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-evenly',
+		alignItems: 'center',
 	},
 	button: {
 		width: '110px',
@@ -54,11 +49,12 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 	cardImageContainer: {
+		margin: '10px',
 		borderRadius: '50%',
 		borderColor: theme.palette.divider,
 		border: '2px solid',
-		width: '100px',
-		height: '100px',
+		width: '150px',
+		height: '150px',
 	},
 	input: {
 		display: 'none',
@@ -67,24 +63,14 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		opacity: '0.4',
 	},
+	divider: {
+		marginTop: '5px',
+		height: '3px',
+		backgroundColor: theme.palette.primary.main,
+	},
 }));
 
 const db = firebase.firestore();
-
-const cargos = [
-	{
-		value: 'auxiliar',
-		label: 'Auxiliar',
-	},
-	{
-		value: 'gerente',
-		label: 'Gerente',
-	},
-	{
-		value: 'cajero',
-		label: 'Cajero',
-	},
-];
 
 const rangos = [
 	{
@@ -291,114 +277,111 @@ const Edit = ({ history }) => {
 							<Paper variant='outlined' className={classes.paperContainer}>
 								<Grid
 									container
-									justify='space-evenly'
+									justify='flex-start'
 									alignItems='center'
 									spacing={1}
 								>
-									<Grid item xs={12}>
-										<Box pl={5} p={3} display='flex'>
-											<Typography variant='h5' color='initial'>
-												Editar Usuario
-											</Typography>
-										</Box>
+									<Grid item xs={12} style={{ marginBottom: '10px' }}>
+										<Typography
+											variant='h5'
+											color='initial'
+											style={{ paddingLeft: '10px' }}
+										>
+											Editar Usuario
+										</Typography>
+										<Divider className={classes.divider} />
 									</Grid>
-									<Grid item sm={6}>
-										<Box p={4} display='flex' justifyContent='center'>
-											<Paper
-												variant='outlined'
-												className={classes.paperImgContainer}
-											>
-												<Box>
-													<input
-														accept='image/*'
-														className={classes.input}
-														id='contained-button-file'
-														multiple
-														type='file'
-														onChange={onFileChange}
+
+									<Grid item container xs={12} justify='center'>
+										{/* <Box p={4} display='flex' justifyContent='center'> */}
+										<Paper
+											variant='outlined'
+											className={classes.paperImgContainer}
+										>
+											<Box>
+												<input
+													accept='image/*'
+													className={classes.input}
+													id='contained-button-file'
+													multiple
+													type='file'
+													onChange={onFileChange}
+												/>
+												<label htmlFor='contained-button-file'>
+													<ButtonBase
+														variant='contained'
+														color='primary'
+														component='span'
+													>
+														{fileLocal && (
+															<CardMedia
+																className={classes.cardImageContainer}
+																image={fileLocal}
+																title='Live from space album cover'
+															/>
+														)}
+
+														{!fileLocal && (
+															<CardMedia
+																className={classes.cardImageContainer}
+																image={imagen}
+																title='Live from space album cover'
+															/>
+														)}
+
+														<PhotoCamera className={classes.imagePhoto} />
+													</ButtonBase>
+												</label>
+											</Box>
+
+											<FormControlLabel
+												control={
+													<Checkbox
+														checked={authorized}
+														onChange={handleChangeChecked}
+														color='primary'
 													/>
-													<label htmlFor='contained-button-file'>
-														<ButtonBase
-															variant='contained'
-															color='primary'
-															component='span'
-														>
-															{fileLocal && (
-																<CardMedia
-																	className={classes.cardImageContainer}
-																	image={fileLocal}
-																	title='Live from space album cover'
-																/>
-															)}
+												}
+												label='Activo'
+											/>
+										</Paper>
+									</Grid>
 
-															{!fileLocal && (
-																<CardMedia
-																	className={classes.cardImageContainer}
-																	image={imagen}
-																	title='Live from space album cover'
-																/>
-															)}
-
-															<PhotoCamera className={classes.imagePhoto} />
-														</ButtonBase>
-													</label>
-												</Box>
-												<FormControlLabel
-													control={
-														<Checkbox
-															checked={authorized}
-															onChange={handleChangeChecked}
-															color='primary'
-														/>
-													}
-													label='Activo'
-												/>
-											</Paper>
+									<Grid item lg={4} sm={6} xs={12}>
+										<Box p={3}>
+											<TextField
+												fullWidth
+												// // defaultValue="Nombres"
+												variant='outlined'
+												label='Nombres'
+												required
+												name='nombre'
+												id='nombre'
+												type='text'
+												value={values.nombre}
+												error={errors.nombre}
+												onChange={handleChange}
+											/>
 										</Box>
 									</Grid>
-									<Grid
-										item
-										container
-										sm={6}
-										// spacing={6}
-										justify='flex-end'
-										alignItems='center'
-									>
-										<Grid item sm={12} xs={12}>
-											<Box p={3}>
-												<TextField
-													fullWidth
-													// // defaultValue="Nombres"
-													variant='outlined'
-													label='Nombres'
-													required
-													name='nombre'
-													id='nombre'
-													type='text'
-													value={values.nombre}
-													error={errors.nombre}
-													onChange={handleChange}
-												/>
-											</Box>
-										</Grid>
-										<Grid item sm={12} xs={12} style={{ paddingTop: '3px' }}>
-											<Box p={3}>
-												<TextField
-													fullWidth
-													// defaultValue="Apellidos"
-													variant='outlined'
-													label='Apellidos'
-													required
-													name='apellido'
-													id='apellido'
-													// defaultValue="Borges Pereira"
-													type='text'
-													value={values.apellido}
-													error={errors.apellido}
-													onChange={handleChange}
-												/>
-											</Box>
-										</Grid>
+
+									<Grid item lg={4} sm={6} xs={12}>
+										<Box p={3}>
+											<TextField
+												fullWidth
+												// defaultValue="Apellidos"
+												variant='outlined'
+												label='Apellidos'
+												required
+												name='apellido'
+												id='apellido'
+												// defaultValue="Borges Pereira"
+												type='text'
+												value={values.apellido}
+												error={errors.apellido}
+												onChange={handleChange}
+											/>
+										</Box>
 									</Grid>
 
 									<Grid item sm={6} xs={12} lg={4}>
@@ -417,6 +400,7 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -433,6 +417,7 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -449,6 +434,7 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -465,6 +451,7 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -481,6 +468,7 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -497,6 +485,7 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -513,7 +502,7 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
-									<Grid item sm={6} xs={12} lg={4}>
+									<Grid item lg={6} sm={6} xs={12}>
 										<Box p={3}>
 											<TextField
 												id='fechaNacimiento'
@@ -529,54 +518,55 @@ const Edit = ({ history }) => {
 											/>
 										</Box>
 									</Grid>
-									<Grid item container xs={12} justify='center'>
-										<Grid item sm={6} xs={12}>
-											<Box p={3}>
-												<TextField
-													id='role'
-													name='role'
-													required={authorized}
-													fullWidth
-													variant='outlined'
-													label='Rango'
-													value={values.role}
-													error={errors.role}
-													onChange={handleChange}
-													disabled={!authorized}
-													select
-												>
-													{rangos.map((option) => (
-														<MenuItem key={option.value} value={option.value}>
-															{option.label}
-														</MenuItem>
-													))}
-												</TextField>
-											</Box>
-										</Grid>
+
+									<Grid justify='flex-start' item lg={6} sm={6} xs={12}>
+										<Box p={3}>
+											<TextField
+												id='role'
+												name='role'
+												required={authorized}
+												fullWidth
+												variant='outlined'
+												label='Rango'
+												value={values.role}
+												error={errors.role}
+												onChange={handleChange}
+												disabled={!authorized}
+												select
+											>
+												{rangos.map((option) => (
+													<MenuItem key={option.value} value={option.value}>
+														{option.label}
+													</MenuItem>
+												))}
+											</TextField>
+										</Box>
 									</Grid>
 
-									<Box p={5} display='flex' justifyContent='center'>
-										<Button
-											// fullWidth
-											variant='contained'
-											color='secondary'
-											className={classes.button}
-											// onClick={() => handleClose()}
-										>
-											Cancelar
-										</Button>
-										<Button
-											// fullWidth
-											variant='contained'
-											color='primary'
-											type='submit'
-											onClick={handleSubmit}
-											disabled={loading}
-											className={classes.button}
-										>
-											Editar
-										</Button>
-									</Box>
+									<Grid item container justify='flex-start'>
+										<Box p={5} display='flex' justifyContent='center'>
+											<Button
+												// fullWidth
+												variant='contained'
+												color='secondary'
+												className={classes.button}
+												// onClick={() => handleClose()}
+											>
+												Cancelar
+											</Button>
+											<Button
+												// fullWidth
+												variant='contained'
+												color='primary'
+												type='submit'
+												onClick={handleSubmit}
+												disabled={loading}
+												className={classes.button}
+											>
+												Editar
+											</Button>
+										</Box>
+									</Grid>
 								</Grid>
 							</Paper>
 						</form>

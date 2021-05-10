@@ -22,15 +22,13 @@ import { db } from '../../firebase';
 const useStyles = makeStyles((theme) => ({
 	root: {
 		'& .super-app-theme--header': {
-			backgroundColor: theme.palette.primary.light,
+			backgroundColor: theme.palette.primary.main,
 			color: '#fafafa',
 		},
 	},
 
 	rootPaper: {
 		padding: theme.spacing(6),
-		// backgroundColor: 'transparent',
-		// borderColor: '#fafafa',
 	},
 	dataGrid: {
 		border: '1px solid red',
@@ -39,7 +37,8 @@ const useStyles = makeStyles((theme) => ({
 		[theme.breakpoints.down('xs')]: {
 			justifyContent: 'center',
 		},
-		padding: theme.spacing(6),
+		padding: theme.spacing(2),
+		marginBottom: '5px',
 	},
 	textFieldSearch: {
 		'& .MuiOutlinedInput-root': {
@@ -167,20 +166,22 @@ const List = ({ history }) => {
 
 	return (
 		<>
-			<Box
-				display='flex'
-				justifyContent='flex-end'
-				className={classes.boxCenter}
-			>
-				<Button
-					color='primary'
-					variant='contained'
-					onClick={() => history.push('/users/add')}
-				>
-					Agregar
-				</Button>
-			</Box>
 			<Paper variant='outlined' classes={{ root: classes.rootPaper }}>
+				<Box
+					display='flex'
+					justifyContent='flex-end'
+					// className={classes.boxCenter}
+					// py={2}
+					mb={5}
+				>
+					<Button
+						color='primary'
+						variant='contained'
+						onClick={() => history.push('/users/add')}
+					>
+						Agregar
+					</Button>
+				</Box>
 				<Box mb={6}>
 					<TextField
 						fullWidth

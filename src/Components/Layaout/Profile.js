@@ -17,7 +17,7 @@ const Profile = () => {
 	const theme = useTheme();
 
 	return (
-		<Box p={theme.spacing(1)} justifyContent='center'>
+		<Box my='15px' p={theme.spacing(1)} justifyContent='center'>
 			<Box display='flex' justifyContent='center'>
 				<Avatar alt='Avatar' src={user.photoURL} className={classes.avatar} />
 			</Box>

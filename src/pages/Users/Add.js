@@ -14,6 +14,7 @@ import {
 	ButtonBase,
 	CardMedia,
 	MenuItem,
+	Divider,
 } from '@material-ui/core';
 
 import { useSnackbar } from 'notistack';
@@ -27,9 +28,6 @@ const useStyles = makeStyles((theme) => ({
 	},
 	boxPaperContainer: {
 		display: 'flex',
-		// width: '500px',
-		// width: '100%',
-		// maxWidth: '300px',
 	},
 	paperImgContainer: {
 		margin: '12px',
@@ -40,8 +38,6 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: 'column',
 		justifyContent: 'space-evenly',
 		alignItems: 'center',
-		// padding: '5px',
-		// width: '100%',
 	},
 	button: {
 		width: '110px',
@@ -57,8 +53,6 @@ const useStyles = makeStyles((theme) => ({
 		borderRadius: '50%',
 		borderColor: theme.palette.divider,
 		border: '2px solid',
-		// padding: '5px'
-
 		width: '150px',
 		height: '150px',
 	},
@@ -69,39 +63,29 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		opacity: '0.4',
 	},
+	divider: {
+		marginTop: '5px',
+		height: '3px',
+		backgroundColor: theme.palette.primary.main,
+	},
 }));
 
-const cargos = [
+const roles = [
 	{
-		value: 'auxiliar',
-		label: 'Auxiliar',
-	},
-	{
-		value: 'gerente',
-		label: 'Gerente',
-	},
-	{
-		value: 'cajero',
-		label: 'Cajero',
-	},
-];
-
-const rangos = [
-	{
-		value: 'administrador',
+		value: 'admin',
 		label: 'Administrador',
 	},
 	{
-		value: 'responsable',
-		label: 'Responsable',
+		value: 'barber',
+		label: 'Barbero',
 	},
 	{
-		value: 'encargado',
-		label: 'Encargado',
+		value: 'cashier',
+		label: 'Cajero',
 	},
 	{
-		value: 'funcionario',
-		label: 'Funcionario',
+		value: 'others',
+		label: 'Otros',
 	},
 ];
 
@@ -122,50 +106,49 @@ const Add = () => {
 		setFileLocal(URL.createObjectURL(file));
 	};
 
+	const phoneValidation = /^s*(\d{3})([- ])(\d{3})([- ])(\d{3})/;
+	// const identificationValidation = [0-9][^-];
+
 	const validation = Yup.object().shape({
-		nombre: Yup.string()
+		name: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		apellido: Yup.string()
+		lastName: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		telefono: Yup.string()
+		phone: Yup.string()
+			.matches(phoneValidation, 'no es un numero de telefono!')
+			.required('Requerido'),
+		dateOfBirth: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		fechaNacimiento: Yup.string()
+		state: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		departamento: Yup.string()
+		address1: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		direccion2: Yup.string()
+		address2: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		direccion1: Yup.string()
+		city: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		ciudad: Yup.string()
-			.min(2, 'Muy corto!')
-			.max(50, 'Muy largo!')
-			.required('Requerido'),
-		docIdentidad: Yup.string()
-			.min(2, 'Muy corto!')
-			.max(50, 'Muy largo!')
+		identificationNumber: Yup.number()
+			.min(5, 'Muy corto!')
+			.max(7, 'Muy largo!')
 			.required('Requerido'),
 		email: Yup.string()
 			.email('Introduce un Email correcto!')
 			.required('Requerido!'),
 		role: Yup.string().when('$user', (_, passSchema) =>
-			authorized ? passSchema.required() : passSchema,
-		),
-		cargo: Yup.string().when('$user', (_, passSchema) =>
 			authorized ? passSchema.required() : passSchema,
 		),
 	});
@@ -180,19 +163,18 @@ const Add = () => {
 
 	const handleAddUser = (
 		{
-			nombre,
-			apellido,
+			name,
+			lastName,
 			email,
 			role,
-			cargo,
-			ciudad,
-			direccion1,
-			direccion2,
-			fechaNacimiento,
-			docIdentidad,
-			telefono,
-			departamento,
-			imagen,
+			city,
+			address2,
+			address1,
+			dateOfBirth,
+			identificationNumber,
+			phone,
+			state,
+			image,
 		},
 		actions,
 	) => {
@@ -206,20 +188,19 @@ const Add = () => {
 			await db
 				.collection('usersRole')
 				.add({
-					nombre,
-					apellido,
-					telefono,
-					ciudad,
-					direccion1,
-					direccion2,
-					fechaNacimiento,
-					docIdentidad,
-					departamento,
+					name,
+					lastName,
+					phone,
+					city,
+					address2,
+					address1,
+					dateOfBirth,
+					identificationNumber,
+					state,
 					email,
 					role,
-					cargo: cargo && cargo,
-					autorizacion: authorized,
-					imagen: refImage,
+					authorization: authorized,
+					image: refImage,
 				})
 				.then(() => {
 					handleClickPopUp('success', 'Usuario agregado con exito');
@@ -238,19 +219,20 @@ const Add = () => {
 		<div>
 			<Formik
 				initialValues={{
-					nombre: '',
-					apellido: '',
+					name: '',
+					lastName: '',
 					email: '',
 					role: '',
 					cargo: '',
-					ciudad: '',
-					direccion1: '',
-					direccion2: '',
-					fechaNacimiento: '',
-					telefono: '',
-					docIdentidad: '',
-					departamento: '',
-					autorizacion: false,
+					city: '',
+					address2: '',
+					address1: '',
+					dateOfBirth: '',
+					phone: '',
+					identificationNumber: '',
+					state: '',
+					authorization: false,
+					image: '',
 				}}
 				onSubmit={(values, actions) => {
 					setLoading(true);
@@ -270,15 +252,19 @@ const Add = () => {
 									alignItems='center'
 									spacing={1}
 								>
-									<Grid item xs={12}>
-										<Box pl={5} p={3} display='flex'>
-											<Typography variant='h5' color='initial'>
-												Agregar Usuario
-											</Typography>
-										</Box>
+									<Grid item xs={12} style={{ marginBottom: '10px' }}>
+										<Typography
+											variant='h5'
+											color='initial'
+											style={{ paddingLeft: '10px' }}
+										>
+											Agregar Usuario
+										</Typography>
+
+										<Divider className={classes.divider} />
 									</Grid>
+
 									<Grid item container xs={12} justify='center'>
-										{/* <Box p={4} className='boxPaperContainer'> */}
 										<Paper
 											variant='outlined'
 											className={classes.paperImgContainer}
@@ -290,7 +276,6 @@ const Add = () => {
 													id='contained-button-file'
 													multiple
 													type='file'
-													// value={values.imagen}
 													onChange={onFileChange}
 												/>
 												<label htmlFor='contained-button-file'>
@@ -308,6 +293,7 @@ const Add = () => {
 													</ButtonBase>
 												</label>
 											</Box>
+
 											<FormControlLabel
 												control={
 													<Checkbox
@@ -319,7 +305,6 @@ const Add = () => {
 												label='Activo'
 											/>
 										</Paper>
-										{/* </Box> */}
 									</Grid>
 
 									<Grid item lg={4} sm={6} xs={12}>
@@ -329,15 +314,16 @@ const Add = () => {
 												fullWidth
 												variant='outlined'
 												required
-												name='nombre'
-												id='nombre'
+												name='name'
+												id='name'
 												type='text'
-												value={values.nombre}
-												error={errors.nombre}
+												value={values.name}
+												error={errors.name}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item lg={4} sm={6} xs={12}>
 										<Box p={3}>
 											<TextField
@@ -345,11 +331,11 @@ const Add = () => {
 												fullWidth
 												variant='outlined'
 												required
-												name='apellido'
-												id='apellido'
+												name='lastName'
+												id='lastName'
 												type='text'
-												value={values.apellido}
-												error={errors.apellido}
+												value={values.lastName}
+												error={errors.lastName}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -374,6 +360,7 @@ const Add = () => {
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -381,18 +368,19 @@ const Add = () => {
 												InputLabelProps={{
 													className: classes.textFieldInputProps,
 												}}
-												id='telefono'
-												name='telefono'
+												id='phone'
+												name='phone'
 												required
 												fullWidth
 												variant='outlined'
 												label='Telefono'
-												value={values.telefono}
-												error={errors.telefono}
+												value={values.phone}
+												error={errors.phone}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -400,18 +388,19 @@ const Add = () => {
 												InputLabelProps={{
 													className: classes.textFieldInputProps,
 												}}
-												id='departamento'
-												name='departamento'
+												id='state'
+												name='state'
 												required
 												fullWidth
 												variant='outlined'
 												label='Departamento'
-												value={values.departamento}
-												error={errors.departamento}
+												value={values.state}
+												error={errors.state}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -419,18 +408,19 @@ const Add = () => {
 												InputLabelProps={{
 													className: classes.textFieldInputProps,
 												}}
-												id='ciudad'
-												name='ciudad'
+												id='city'
+												name='city'
 												required
 												fullWidth
 												variant='outlined'
 												label='Ciudad'
-												value={values.ciudad}
-												error={errors.ciudad}
+												value={values.city}
+												error={errors.city}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -438,18 +428,19 @@ const Add = () => {
 												InputLabelProps={{
 													className: classes.textFieldInputProps,
 												}}
-												id='direccion1'
-												name='direccion1'
+												id='address1'
+												name='address1'
 												required
 												fullWidth
 												variant='outlined'
-												label='Direccion1'
-												value={values.direccion1}
-												error={errors.direccion1}
+												label='Direccion 1'
+												value={values.address1}
+												error={errors.address1}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
@@ -457,44 +448,46 @@ const Add = () => {
 												InputLabelProps={{
 													className: classes.textFieldInputProps,
 												}}
-												id='direccion2'
-												name='direccion2'
+												id='address2'
+												name='address2'
 												required
 												fullWidth
 												variant='outlined'
-												label='Direccion2'
-												value={values.direccion2}
-												error={errors.direccion2}
+												label='Direccion 2'
+												value={values.address2}
+												error={errors.address2}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												id='docIdentidad'
-												name='docIdentidad'
+												id='identificationNumber'
+												name='identificationNumber'
 												required
 												fullWidth
 												variant='outlined'
-												label='Numero de C.I.'
-												value={values.docIdentidad}
-												error={errors.docIdentidad}
+												label='Numero de Documento'
+												value={values.identificationNumber}
+												error={errors.identificationNumber}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
+
 									<Grid item lg={6} sm={6} xs={12}>
 										<Box p={3}>
 											<TextField
-												id='fechaNacimiento'
-												name='fechaNacimiento'
+												id='dateOfBirth'
+												name='dateOfBirth'
 												required
 												fullWidth
 												variant='outlined'
 												label='Fecha de Nacimiento'
-												value={values.fechaNacimiento}
-												error={errors.fechaNacimiento}
+												value={values.dateOfBirth}
+												error={errors.dateOfBirth}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -515,7 +508,7 @@ const Add = () => {
 												disabled={!authorized}
 												select
 											>
-												{rangos.map((option) => (
+												{roles.map((option) => (
 													<MenuItem key={option.value} value={option.value}>
 														{option.label}
 													</MenuItem>
