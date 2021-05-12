@@ -106,7 +106,7 @@ const Add = () => {
 		setFileLocal(URL.createObjectURL(file));
 	};
 
-	const phoneValidation = /^s*(\d{3})([- ])(\d{3})([- ])(\d{3})/;
+	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
 	// const identificationValidation = [0-9][^-];
 
 	const validation = Yup.object().shape({
@@ -141,7 +141,7 @@ const Add = () => {
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		identificationNumber: Yup.number()
+		identificationNumber: Yup.string()
 			.min(5, 'Muy corto!')
 			.max(7, 'Muy largo!')
 			.required('Requerido'),
@@ -152,6 +152,8 @@ const Add = () => {
 			authorized ? passSchema.required() : passSchema,
 		),
 	});
+
+	const handleChangeSetPhoneNumber = () => {};
 
 	const handleChangeAutorized = (event) => {
 		setAuthorized(event.target.checked);
@@ -173,11 +175,14 @@ const Add = () => {
 			dateOfBirth,
 			identificationNumber,
 			phone,
+			countryPhoneCode,
 			state,
 			image,
 		},
 		actions,
 	) => {
+		const phoneFiltered = parseFloat(phone.replace(/([595]{3})|[^0-9]/g, ''));
+
 		debounce(async () => {
 			const storageRef = storage.ref();
 			const fileRef = storageRef.child(email);
@@ -190,7 +195,8 @@ const Add = () => {
 				.add({
 					name,
 					lastName,
-					phone,
+					phone: phoneFiltered,
+					countryPhoneCode,
 					city,
 					address2,
 					address1,
@@ -225,6 +231,7 @@ const Add = () => {
 					role: '',
 					cargo: '',
 					city: '',
+					countryPhoneCode: '+595',
 					address2: '',
 					address1: '',
 					dateOfBirth: '',
@@ -235,11 +242,13 @@ const Add = () => {
 					image: '',
 				}}
 				onSubmit={(values, actions) => {
+					console.log(values.phone);
+					console.log(actions, 'acctt');
 					setLoading(true);
 					handleAddUser(values, actions);
 				}}
 				validateOnChange={false}
-				validateOnBlur={false}
+				validateOnBlur={true}
 				validationSchema={validation}
 			>
 				{({ values, errors, handleSubmit, handleChange }) => {
@@ -376,6 +385,7 @@ const Add = () => {
 												label='Telefono'
 												value={values.phone}
 												error={errors.phone}
+												defaultValue='Hello World'
 												onChange={handleChange}
 											/>
 										</Box>
