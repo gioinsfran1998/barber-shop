@@ -107,7 +107,8 @@ const Add = () => {
 	};
 
 	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
-	// const identificationValidation = [0-9][^-];
+	const identificationValidation = /(^\d{1}\d{5,6})|(^\d{1}\.\d{3}\.\d{3})|(^\d{3}\.\d{3})/g;
+	const dateOfBirthValidation = /(^\d{8})|(\d{2}[\.|\s]\d{2}[\.|\s]\d{4})|(\d{2}\/\d{2}\/\d{4})/;
 
 	const validation = Yup.object().shape({
 		name: Yup.string()
@@ -122,8 +123,9 @@ const Add = () => {
 			.matches(phoneValidation, 'no es un numero de telefono!')
 			.required('Requerido'),
 		dateOfBirth: Yup.string()
-			.min(2, 'Muy corto!')
-			.max(50, 'Muy largo!')
+			.matches(dateOfBirthValidation, 'no es una fecha!')
+			.min(8, 'Muy corto!')
+			.max(10, 'Muy largo!')
 			.required('Requerido'),
 		state: Yup.string()
 			.min(2, 'Muy corto!')
@@ -142,8 +144,12 @@ const Add = () => {
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
 		identificationNumber: Yup.string()
-			.min(5, 'Muy corto!')
-			.max(7, 'Muy largo!')
+			.matches(
+				identificationValidation,
+				'no es un documento de identidad valido',
+			)
+			.min(6, 'Muy corto!')
+			.max(9, 'Muy largo!')
 			.required('Requerido'),
 		email: Yup.string()
 			.email('Introduce un Email correcto!')
@@ -152,8 +158,6 @@ const Add = () => {
 			authorized ? passSchema.required() : passSchema,
 		),
 	});
-
-	const handleChangeSetPhoneNumber = () => {};
 
 	const handleChangeAutorized = (event) => {
 		setAuthorized(event.target.checked);
@@ -182,6 +186,10 @@ const Add = () => {
 		actions,
 	) => {
 		const phoneFiltered = parseFloat(phone.replace(/([595]{3})|[^0-9]/g, ''));
+		const identificationFiltered = parseFloat(
+			identificationNumber.replace(/[^\d]/g, ''),
+		);
+		const dateOfBirthFiltered = parseFloat(dateOfBirth.replace(/[^\d]/g, '/'));
 
 		debounce(async () => {
 			const storageRef = storage.ref();
@@ -200,8 +208,8 @@ const Add = () => {
 					city,
 					address2,
 					address1,
-					dateOfBirth,
-					identificationNumber,
+					dateOfBirth: dateOfBirthFiltered,
+					identificationNumber: identificationFiltered,
 					state,
 					email,
 					role,
@@ -491,13 +499,18 @@ const Add = () => {
 										<Box p={3}>
 											<TextField
 												id='dateOfBirth'
-												name='dateOfBirth'
-												required
+												name='identificationNumber'
 												fullWidth
+												required
+												label='dateOfBirth'
 												variant='outlined'
-												label='Fecha de Nacimiento'
+												type='date'
 												value={values.dateOfBirth}
 												error={errors.dateOfBirth}
+												defaultValue='2017-05-24'
+												InputLabelProps={{
+													shrink: true,
+												}}
 												onChange={handleChange}
 											/>
 										</Box>
