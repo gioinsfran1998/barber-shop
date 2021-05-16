@@ -21,6 +21,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { firebase, storage } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { useSnackbar } from 'notistack';
+import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles((theme) => ({
 	paperContainer: {
@@ -72,22 +73,22 @@ const useStyles = makeStyles((theme) => ({
 
 const db = firebase.firestore();
 
-const rangos = [
+const roles = [
 	{
-		value: 'administrador',
+		value: 'admin',
 		label: 'Administrador',
 	},
 	{
-		value: 'responsable',
-		label: 'Responsable',
+		value: 'barber',
+		label: 'Barbero',
 	},
 	{
-		value: 'encargado',
-		label: 'Encargado',
+		value: 'cashier',
+		label: 'Cajero',
 	},
 	{
-		value: 'funcionario',
-		label: 'Funcionario',
+		value: 'others',
+		label: 'Otros',
 	},
 ];
 
@@ -100,6 +101,7 @@ const Edit = ({ history }) => {
 	const [fileUrl, setFileUrl] = React.useState(null);
 	const [fileLocal, setFileLocal] = React.useState(null);
 
+	const [selectedDate, handleDateChange] = useState(new Date(1994, 1, 3));
 	const { enqueueSnackbar } = useSnackbar();
 
 	const onFileChange = async (e) => {
@@ -110,42 +112,49 @@ const Edit = ({ history }) => {
 		setFileLocal(URL.createObjectURL(file));
 	};
 
+	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
+	const identificationValidation = /(^\d{1}\d{5,6})|(^\d{1}\.\d{3}\.\d{3})|(^\d{3}\.\d{3})/g;
+
 	const validation = Yup.object().shape({
-		nombre: Yup.string()
+		name: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		apellido: Yup.string()
+		lastName: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		telefono: Yup.string()
+		phone: Yup.string()
+			.matches(phoneValidation, 'no es un numero de telefono!')
+			.required('Requerido'),
+		// dateOfBirth: Yup.string()
+		// 	.matches(dateOfBirthValidation, 'no es una fecha!')
+		// 	.min(8, 'Muy corto!')
+		// 	.max(10, 'Muy largo!')
+		// 	.required('Requerido'),
+		state: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		fechaNacimiento: Yup.string()
+		address1: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		departamento: Yup.string()
+		address2: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		direccion2: Yup.string()
+		city: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
-		direccion1: Yup.string()
-			.min(2, 'Muy corto!')
-			.max(50, 'Muy largo!')
-			.required('Requerido'),
-		ciudad: Yup.string()
-			.min(2, 'Muy corto!')
-			.max(50, 'Muy largo!')
-			.required('Requerido'),
-		docIdentidad: Yup.string()
-			.min(2, 'Muy corto!')
-			.max(50, 'Muy largo!')
+		identificationNumber: Yup.string()
+			.matches(
+				identificationValidation,
+				'no es un documento de identidad valido',
+			)
+			.min(6, 'Muy corto!')
+			.max(9, 'Muy largo!')
 			.required('Requerido'),
 		email: Yup.string()
 			.email('Introduce un Email correcto!')
@@ -153,33 +162,29 @@ const Edit = ({ history }) => {
 		role: Yup.string().when('$user', (_, passSchema) =>
 			authorized ? passSchema.required() : passSchema,
 		),
-		cargo: Yup.string().when('$user', (_, passSchema) =>
-			authorized ? passSchema.required() : passSchema,
-		),
 	});
 
 	const {
-		nombre,
-		role,
 		id,
-		estado,
+		name,
+		lastName,
 		email,
-		cargo,
-		apellido,
-		autorizacion,
-		ciudad,
-		direccion1,
-		direccion2,
-		fechaNacimiento,
-		telefono,
-		docIdentidad,
-		departamento,
-		imagen,
+		role,
+		city,
+		address2,
+		address1,
+		dateOfBirth,
+		identificationNumber,
+		phone,
+		countryPhoneCode,
+		state,
+		image,
+		authorization,
 	} = history.location.state;
 
 	useEffect(() => {
-		if (autorizacion) {
-			setAuthorized(autorizacion);
+		if (authorization) {
+			setAuthorized(authorization);
 		}
 	}, []);
 
@@ -193,18 +198,18 @@ const Edit = ({ history }) => {
 	};
 
 	const handleEdit = ({
-		nombre,
-		apellido,
+		name,
+		lastName,
 		email,
 		role,
-		cargo = null,
-		ciudad,
-		direccion1,
-		direccion2,
-		fechaNacimiento,
-		docIdentidad,
-		telefono,
-		departamento,
+		city,
+		address2,
+		address1,
+		dateOfBirth,
+		identificationNumber,
+		phone,
+		state,
+		image,
 	}) => {
 		debounce(async () => {
 			const storageRef = storage.ref();
@@ -217,24 +222,23 @@ const Edit = ({ history }) => {
 				.collection('usersRole')
 				.doc(id)
 				.update({
-					nombre,
-					apellido,
-					telefono,
-					ciudad,
-					direccion1,
-					direccion2,
-					fechaNacimiento,
-					docIdentidad,
-					departamento,
+					name,
+					lastName,
 					email,
 					role,
-					cargo,
-					autorizacion: authorized,
-					imagen: refImage,
+					city,
+					address2,
+					address1,
+					dateOfBirth,
+					identificationNumber,
+					phone,
+					state,
+					authorization: authorized,
+					image: refImage,
 				})
 				.then(() => {
 					setLoading(false);
-					history.push('/usuarios/lista');
+					history.push('/users/list');
 					console.log('Ok Editado!!!');
 					handleClickPopUp('success', 'Usuario editado con éxito');
 				})
@@ -249,19 +253,18 @@ const Edit = ({ history }) => {
 		<div>
 			<Formik
 				initialValues={{
-					nombre,
-					apellido,
+					name,
+					lastName,
 					email,
 					role,
-					estado,
-					cargo,
-					ciudad,
-					direccion1,
-					direccion2,
-					fechaNacimiento,
-					telefono,
-					docIdentidad,
-					departamento,
+					city,
+					address2,
+					address1,
+					dateOfBirth,
+					identificationNumber,
+					phone,
+					countryPhoneCode,
+					state,
 				}}
 				onSubmit={(values, { resetForm }) => {
 					setLoading(true);
@@ -324,7 +327,7 @@ const Edit = ({ history }) => {
 														{!fileLocal && (
 															<CardMedia
 																className={classes.cardImageContainer}
-																image={imagen}
+																image={image}
 																title='Live from space album cover'
 															/>
 														)}
@@ -350,16 +353,15 @@ const Edit = ({ history }) => {
 									<Grid item lg={4} sm={6} xs={12}>
 										<Box p={3}>
 											<TextField
-												fullWidth
-												// // defaultValue="Nombres"
-												variant='outlined'
 												label='Nombres'
+												fullWidth
+												variant='outlined'
 												required
-												name='nombre'
-												id='nombre'
+												name='name'
+												id='name'
 												type='text'
-												value={values.nombre}
-												error={errors.nombre}
+												value={values.name}
+												error={errors.name}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -368,17 +370,15 @@ const Edit = ({ history }) => {
 									<Grid item lg={4} sm={6} xs={12}>
 										<Box p={3}>
 											<TextField
-												fullWidth
-												// defaultValue="Apellidos"
-												variant='outlined'
 												label='Apellidos'
+												fullWidth
+												variant='outlined'
 												required
-												name='apellido'
-												id='apellido'
-												// defaultValue="Borges Pereira"
+												name='lastName'
+												id='lastName'
 												type='text'
-												value={values.apellido}
-												error={errors.apellido}
+												value={values.lastName}
+												error={errors.lastName}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -387,13 +387,16 @@ const Edit = ({ history }) => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
+												className={classes.textFieldAdd}
+												InputLabelProps={{
+													className: classes.textFieldInputProps,
+												}}
 												id='email'
 												name='email'
 												required
 												fullWidth
 												variant='outlined'
 												label='Email'
-												disabled
 												value={values.email}
 												error={errors.email}
 												onChange={handleChange}
@@ -404,15 +407,19 @@ const Edit = ({ history }) => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												id='telefono'
-												name='telefono'
+												className={classes.textFieldAdd}
+												InputLabelProps={{
+													className: classes.textFieldInputProps,
+												}}
+												id='phone'
+												name='phone'
 												required
 												fullWidth
 												variant='outlined'
 												label='Telefono'
-												// defaultValue="(0993) 534536"
-												value={values.telefono}
-												error={errors.telefono}
+												value={values.phone}
+												error={errors.phone}
+												defaultValue='Hello World'
 												onChange={handleChange}
 											/>
 										</Box>
@@ -421,15 +428,18 @@ const Edit = ({ history }) => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												id='departamento'
-												name='departamento'
+												className={classes.textFieldAdd}
+												InputLabelProps={{
+													className: classes.textFieldInputProps,
+												}}
+												id='state'
+												name='state'
 												required
 												fullWidth
 												variant='outlined'
 												label='Departamento'
-												// defaultValue="Alto Parana"
-												value={values.departamento}
-												error={errors.departamento}
+												value={values.state}
+												error={errors.state}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -438,15 +448,18 @@ const Edit = ({ history }) => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												id='ciudad'
-												name='ciudad'
+												className={classes.textFieldAdd}
+												InputLabelProps={{
+													className: classes.textFieldInputProps,
+												}}
+												id='city'
+												name='city'
 												required
 												fullWidth
 												variant='outlined'
 												label='Ciudad'
-												// defaultValue="Ciudad del Este"
-												value={values.ciudad}
-												error={errors.ciudad}
+												value={values.city}
+												error={errors.city}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -455,15 +468,18 @@ const Edit = ({ history }) => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												id='direccion1'
-												name='direccion1'
+												className={classes.textFieldAdd}
+												InputLabelProps={{
+													className: classes.textFieldInputProps,
+												}}
+												id='address1'
+												name='address1'
 												required
 												fullWidth
 												variant='outlined'
-												label='Direccion1'
-												// defaultValue="Barrio los cedrales"
-												value={values.direccion1}
-												error={errors.direccion1}
+												label='Direccion 1'
+												value={values.address1}
+												error={errors.address1}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -472,15 +488,18 @@ const Edit = ({ history }) => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												id='direccion2'
-												name='direccion2'
+												className={classes.textFieldAdd}
+												InputLabelProps={{
+													className: classes.textFieldInputProps,
+												}}
+												id='address2'
+												name='address2'
 												required
 												fullWidth
 												variant='outlined'
-												label='Direccion2'
-												// defaultValue="Calle Brasil, numero #45"
-												value={values.direccion2}
-												error={errors.direccion2}
+												label='Direccion 2'
+												value={values.address2}
+												error={errors.address2}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -489,32 +508,36 @@ const Edit = ({ history }) => {
 									<Grid item sm={6} xs={12} lg={4}>
 										<Box p={3}>
 											<TextField
-												id='docIdentidad'
-												name='docIdentidad'
+												id='identificationNumber'
+												name='identificationNumber'
 												required
 												fullWidth
 												variant='outlined'
-												label='Numero de C.I.'
-												// defaultValue="3.133.345"
-												value={values.docIdentidad}
-												error={errors.docIdentidad}
+												label='Numero de Documento'
+												value={values.identificationNumber}
+												error={errors.identificationNumber}
 												onChange={handleChange}
 											/>
 										</Box>
 									</Grid>
 									<Grid item lg={6} sm={6} xs={12}>
 										<Box p={3}>
-											<TextField
-												id='fechaNacimiento'
-												name='fechaNacimiento'
-												required
-												fullWidth
-												variant='outlined'
+											<KeyboardDatePicker
+												disableToolbar
+												variant='inline'
+												style={{ width: '100%' }}
 												label='Fecha de Nacimiento'
-												// defaultValue="21/02/1994"
-												value={values.fechaNacimiento}
-												error={errors.fechaNacimiento}
-												onChange={handleChange}
+												id='dateOfBirth'
+												name='dateOfBirth'
+												required
+												format='dd/MM/yyyy'
+												InputAdornmentProps={{ position: 'end' }}
+												inputVariant='outlined'
+												value={selectedDate}
+												onChange={handleDateChange}
+												invalidDateMessage='Fecha no valida *'
+												minDateMessage='No puede ser menor a la fecha minima'
+												maxDateMessage='No puede ser mayor a la fecha maxima'
 											/>
 										</Box>
 									</Grid>
@@ -534,7 +557,7 @@ const Edit = ({ history }) => {
 												disabled={!authorized}
 												select
 											>
-												{rangos.map((option) => (
+												{roles.map((option) => (
 													<MenuItem key={option.value} value={option.value}>
 														{option.label}
 													</MenuItem>

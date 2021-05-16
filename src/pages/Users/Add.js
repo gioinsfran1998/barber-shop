@@ -22,6 +22,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import { db, storage } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
+import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
+
 const useStyles = makeStyles((theme) => ({
 	paperContainer: {
 		padding: theme.spacing(6),
@@ -98,6 +100,8 @@ const Add = () => {
 	const [loading, setLoading] = useState(false);
 	const [authorized, setAuthorized] = React.useState(false);
 
+	const [selectedDate, handleDateChange] = useState(new Date(1994, 1, 3));
+
 	const onFileChange = async (e) => {
 		const file = e.target.files[0];
 		const storageRef = storage.ref();
@@ -108,7 +112,7 @@ const Add = () => {
 
 	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
 	const identificationValidation = /(^\d{1}\d{5,6})|(^\d{1}\.\d{3}\.\d{3})|(^\d{3}\.\d{3})/g;
-	const dateOfBirthValidation = /(^\d{8})|(\d{2}[\.|\s]\d{2}[\.|\s]\d{4})|(\d{2}\/\d{2}\/\d{4})/;
+	// const dateOfBirthValidation = /(^\d{8})|(\d{2}[\.|\s]\d{2}[\.|\s]\d{4})|(\d{2}\/\d{2}\/\d{4})/;
 
 	const validation = Yup.object().shape({
 		name: Yup.string()
@@ -122,11 +126,11 @@ const Add = () => {
 		phone: Yup.string()
 			.matches(phoneValidation, 'no es un numero de telefono!')
 			.required('Requerido'),
-		dateOfBirth: Yup.string()
-			.matches(dateOfBirthValidation, 'no es una fecha!')
-			.min(8, 'Muy corto!')
-			.max(10, 'Muy largo!')
-			.required('Requerido'),
+		// dateOfBirth: Yup.string()
+		// 	.matches(dateOfBirthValidation, 'no es una fecha!')
+		// 	.min(8, 'Muy corto!')
+		// 	.max(10, 'Muy largo!')
+		// 	.required('Requerido'),
 		state: Yup.string()
 			.min(2, 'Muy corto!')
 			.max(50, 'Muy largo!')
@@ -189,7 +193,7 @@ const Add = () => {
 		const identificationFiltered = parseFloat(
 			identificationNumber.replace(/[^\d]/g, ''),
 		);
-		const dateOfBirthFiltered = parseFloat(dateOfBirth.replace(/[^\d]/g, '/'));
+		// const dateOfBirthFiltered = parseFloat(dateOfBirth.replace(/[^\d]/g, '/'));
 
 		debounce(async () => {
 			const storageRef = storage.ref();
@@ -208,7 +212,7 @@ const Add = () => {
 					city,
 					address2,
 					address1,
-					dateOfBirth: dateOfBirthFiltered,
+					dateOfBirth: selectedDate,
 					identificationNumber: identificationFiltered,
 					state,
 					email,
@@ -495,9 +499,9 @@ const Add = () => {
 										</Box>
 									</Grid>
 
-									<Grid item lg={6} sm={6} xs={12}>
+									<Grid item lg={4} sm={6} xs={12}>
 										<Box p={3}>
-											<TextField
+											{/* <TextField
 												id='dateOfBirth'
 												name='identificationNumber'
 												fullWidth
@@ -512,11 +516,28 @@ const Add = () => {
 													shrink: true,
 												}}
 												onChange={handleChange}
+											/> */}
+											<KeyboardDatePicker
+												disableToolbar
+												variant='inline'
+												style={{ width: '100%' }}
+												label='Fecha de Nacimiento'
+												id='dateOfBirth'
+												name='dateOfBirth'
+												required
+												format='dd/MM/yyyy'
+												InputAdornmentProps={{ position: 'end' }}
+												inputVariant='outlined'
+												value={selectedDate}
+												onChange={handleDateChange}
+												invalidDateMessage='Fecha no valida *'
+												minDateMessage='No puede ser menor a la fecha minima'
+												maxDateMessage='No puede ser mayor a la fecha maxima'
 											/>
 										</Box>
 									</Grid>
 
-									<Grid justify='flex-start' item lg={6} sm={6} xs={12}>
+									<Grid justify='flex-start' item lg={4} sm={6} xs={12}>
 										<Box p={3}>
 											<TextField
 												id='role'

@@ -2,6 +2,8 @@ import Routes from './routes';
 import { makeStyles } from '@material-ui/core';
 import Theme from './assets/theme/Theme';
 import { SnackbarProvider } from 'notistack';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -15,11 +17,13 @@ function App() {
 	const classes = useStyles();
 	return (
 		<div className={classes.root}>
-			<Theme>
-				<SnackbarProvider>
-					<Routes />
-				</SnackbarProvider>
-			</Theme>
+			<MuiPickersUtilsProvider utils={DateFnsUtils}>
+				<Theme>
+					<SnackbarProvider>
+						<Routes />
+					</SnackbarProvider>
+				</Theme>
+			</MuiPickersUtilsProvider>
 		</div>
 	);
 }
