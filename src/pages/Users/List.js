@@ -96,6 +96,10 @@ const List = ({ history }) => {
 		history.push('/users/edit', row);
 	};
 
+	const handleDetailsUser = async ({ row }) => {
+		history.push('/users/details', row);
+	};
+
 	const columns = [
 		{
 			field: 'name',
@@ -151,7 +155,8 @@ const List = ({ history }) => {
 				<strong>
 					<IconButton
 						aria-label='delete'
-						onClick={() => history.push('/users/detail', params.row)}
+						// onClick={() => history.push('/users/detail', params.row)}
+						onClick={() => handleDetailsUser(params)}
 					>
 						<InfoRounded />
 					</IconButton>
@@ -177,6 +182,7 @@ const List = ({ history }) => {
 					<Button
 						color='primary'
 						variant='contained'
+						// onClick={() => handleEditUser(params)}
 						onClick={() => history.push('/users/add')}
 					>
 						Agregar

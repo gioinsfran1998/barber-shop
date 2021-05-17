@@ -3,6 +3,7 @@ import Login from '../pages/Login/Login';
 import userList from '../pages/Users/List';
 import userAdd from '../pages/Users/Add';
 import userEdit from '../pages/Users/Edit';
+import userDetails from '../pages/Users/Details';
 
 export const RoutesPublic = [
 	{
@@ -35,6 +36,11 @@ export const RoutesPrivates = [
 	{
 		path: '/users/add',
 		Component: userAdd,
+		exact: false,
+	},
+	{
+		path: '/users/details',
+		Component: userDetails,
 		exact: false,
 	},
 ];
