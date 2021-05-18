@@ -22,7 +22,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import { db, storage } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
-import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { KeyboardDatePicker } from '@material-ui/pickers';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
 	paperContainer: {
@@ -99,8 +100,7 @@ const Add = () => {
 	const { enqueueSnackbar } = useSnackbar();
 	const [loading, setLoading] = useState(false);
 	const [authorized, setAuthorized] = React.useState(false);
-
-	const [selectedDate, handleDateChange] = useState(new Date(1994, 1, 3));
+	const [selectedDate, setSelectedDate] = React.useState(new Date());
 
 	const onFileChange = async (e) => {
 		const file = e.target.files[0];
@@ -108,6 +108,13 @@ const Add = () => {
 		const fileRef = storageRef.child(file && file.name);
 		setFileUrl(file);
 		setFileLocal(URL.createObjectURL(file));
+	};
+
+	// format(date, 'dd/MM/yyyy')
+
+	const handleDateChange = (date) => {
+		setSelectedDate(date);
+		console.log(date);
 	};
 
 	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
@@ -124,7 +131,7 @@ const Add = () => {
 			.max(50, 'Muy largo!')
 			.required('Requerido'),
 		phone: Yup.string()
-			.matches(phoneValidation, 'no es un numero de telefono!')
+			.matches(phoneValidation, 'No es un numero de telefono valido!')
 			.required('Requerido'),
 		// dateOfBirth: Yup.string()
 		// 	.matches(dateOfBirthValidation, 'no es una fecha!')
@@ -150,7 +157,7 @@ const Add = () => {
 		identificationNumber: Yup.string()
 			.matches(
 				identificationValidation,
-				'no es un documento de identidad valido',
+				'No es un documento de identidad valido!',
 			)
 			.min(6, 'Muy corto!')
 			.max(9, 'Muy largo!')
@@ -212,7 +219,7 @@ const Add = () => {
 					city,
 					address2,
 					address1,
-					dateOfBirth: selectedDate,
+					dateOfBirth: format(selectedDate, 'dd/MM/yyyy'),
 					identificationNumber: identificationFiltered,
 					state,
 					email,
@@ -254,8 +261,6 @@ const Add = () => {
 					image: '',
 				}}
 				onSubmit={(values, actions) => {
-					console.log(values.phone);
-					console.log(actions, 'acctt');
 					setLoading(true);
 					handleAddUser(values, actions);
 				}}
@@ -263,7 +268,10 @@ const Add = () => {
 				validateOnBlur={true}
 				validationSchema={validation}
 			>
-				{({ values, errors, handleSubmit, handleChange }) => {
+				{({ values, errors, handleSubmit, handleChange, handleBlur }) => {
+					console.log(errors);
+					console.log(handleChange);
+					console.log(handleBlur);
 					return (
 						<form onSubmit={handleSubmit} className={classes.root}>
 							<Paper variant='outlined' className={classes.paperContainer}>
@@ -341,6 +349,8 @@ const Add = () => {
 												value={values.name}
 												error={errors.name}
 												onChange={handleChange}
+												onBlur={handleBlur}
+												helperText={errors.name}
 											/>
 										</Box>
 									</Grid>
@@ -358,6 +368,7 @@ const Add = () => {
 												value={values.lastName}
 												error={errors.lastName}
 												onChange={handleChange}
+												helperText={errors.lastName}
 											/>
 										</Box>
 									</Grid>
@@ -378,6 +389,7 @@ const Add = () => {
 												value={values.email}
 												error={errors.email}
 												onChange={handleChange}
+												helperText={errors.email}
 											/>
 										</Box>
 									</Grid>
@@ -399,6 +411,7 @@ const Add = () => {
 												error={errors.phone}
 												defaultValue='Hello World'
 												onChange={handleChange}
+												helperText={errors.phone}
 											/>
 										</Box>
 									</Grid>
@@ -419,6 +432,7 @@ const Add = () => {
 												value={values.state}
 												error={errors.state}
 												onChange={handleChange}
+												helperText={errors.state}
 											/>
 										</Box>
 									</Grid>
@@ -439,6 +453,7 @@ const Add = () => {
 												value={values.city}
 												error={errors.city}
 												onChange={handleChange}
+												helperText={errors.city}
 											/>
 										</Box>
 									</Grid>
@@ -459,6 +474,7 @@ const Add = () => {
 												value={values.address1}
 												error={errors.address1}
 												onChange={handleChange}
+												helperText={errors.address1}
 											/>
 										</Box>
 									</Grid>
@@ -479,6 +495,7 @@ const Add = () => {
 												value={values.address2}
 												error={errors.address2}
 												onChange={handleChange}
+												helperText={errors.address2}
 											/>
 										</Box>
 									</Grid>
@@ -495,6 +512,7 @@ const Add = () => {
 												value={values.identificationNumber}
 												error={errors.identificationNumber}
 												onChange={handleChange}
+												helperText={errors.identificationNumber}
 											/>
 										</Box>
 									</Grid>
@@ -551,6 +569,7 @@ const Add = () => {
 												onChange={handleChange}
 												disabled={!authorized}
 												select
+												helperText={errors.role}
 											>
 												{roles.map((option) => (
 													<MenuItem key={option.value} value={option.value}>

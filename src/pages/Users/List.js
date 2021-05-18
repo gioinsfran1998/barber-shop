@@ -98,6 +98,7 @@ const List = ({ history }) => {
 
 	const handleDetailsUser = async ({ row }) => {
 		history.push('/users/details', row);
+		console.log(row);
 	};
 
 	const columns = [
@@ -154,7 +155,7 @@ const List = ({ history }) => {
 			renderCell: (params) => (
 				<strong>
 					<IconButton
-						aria-label='delete'
+						aria-label='details'
 						// onClick={() => history.push('/users/detail', params.row)}
 						onClick={() => handleDetailsUser(params)}
 					>
