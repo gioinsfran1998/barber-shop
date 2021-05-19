@@ -264,11 +264,16 @@ const Add = () => {
 					setLoading(true);
 					handleAddUser(values, actions);
 				}}
-				validateOnChange={false}
-				validateOnBlur={true}
 				validationSchema={validation}
 			>
-				{({ values, errors, handleSubmit, handleChange, handleBlur }) => {
+				{({
+					values,
+					errors,
+					handleSubmit,
+					handleChange,
+					handleBlur,
+					touched,
+				}) => {
 					console.log(errors);
 					console.log(handleChange);
 					console.log(handleBlur);
@@ -347,10 +352,10 @@ const Add = () => {
 												id='name'
 												type='text'
 												value={values.name}
-												error={errors.name}
 												onChange={handleChange}
+												error={errors.name && touched.name && errors.name}
+												helperText={errors.name && touched.name && errors.name}
 												onBlur={handleBlur}
-												helperText={errors.name}
 											/>
 										</Box>
 									</Grid>
@@ -366,15 +371,20 @@ const Add = () => {
 												id='lastName'
 												type='text'
 												value={values.lastName}
-												error={errors.lastName}
 												onChange={handleChange}
-												helperText={errors.lastName}
+												error={
+													errors.lastName && touched.lastName && errors.lastName
+												}
+												helperText={
+													errors.lastName && touched.lastName && errors.lastName
+												}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
 
 									<Grid item sm={6} xs={12} lg={4}>
-										<Box p={3}>
+										<Box p={3} display='block'>
 											<TextField
 												className={classes.textFieldAdd}
 												InputLabelProps={{
@@ -387,9 +397,12 @@ const Add = () => {
 												variant='outlined'
 												label='Email'
 												value={values.email}
-												error={errors.email}
 												onChange={handleChange}
-												helperText={errors.email}
+												error={errors.email && touched.email && errors.email}
+												helperText={
+													errors.email && touched.email && errors.email
+												}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
@@ -408,10 +421,13 @@ const Add = () => {
 												variant='outlined'
 												label='Telefono'
 												value={values.phone}
-												error={errors.phone}
 												defaultValue='Hello World'
 												onChange={handleChange}
-												helperText={errors.phone}
+												error={errors.phone && touched.phone && errors.phone}
+												helperText={
+													errors.phone && touched.phone && errors.phone
+												}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
@@ -430,9 +446,12 @@ const Add = () => {
 												variant='outlined'
 												label='Departamento'
 												value={values.state}
-												error={errors.state}
 												onChange={handleChange}
-												helperText={errors.state}
+												error={errors.state && touched.state && errors.state}
+												helperText={
+													errors.state && touched.state && errors.state
+												}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
@@ -451,9 +470,10 @@ const Add = () => {
 												variant='outlined'
 												label='Ciudad'
 												value={values.city}
-												error={errors.city}
 												onChange={handleChange}
-												helperText={errors.city}
+												error={errors.city && touched.city && errors.city}
+												helperText={errors.city && touched.city && errors.city}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
@@ -472,9 +492,14 @@ const Add = () => {
 												variant='outlined'
 												label='Direccion 1'
 												value={values.address1}
-												error={errors.address1}
 												onChange={handleChange}
-												helperText={errors.address1}
+												error={
+													errors.address1 && touched.address1 && errors.address1
+												}
+												helperText={
+													errors.address1 && touched.address1 && errors.address1
+												}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
@@ -493,9 +518,14 @@ const Add = () => {
 												variant='outlined'
 												label='Direccion 2'
 												value={values.address2}
-												error={errors.address2}
 												onChange={handleChange}
-												helperText={errors.address2}
+												error={
+													errors.address2 && touched.address2 && errors.address2
+												}
+												helperText={
+													errors.address2 && touched.address2 && errors.address2
+												}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
@@ -510,35 +540,28 @@ const Add = () => {
 												variant='outlined'
 												label='Numero de Documento'
 												value={values.identificationNumber}
-												error={errors.identificationNumber}
 												onChange={handleChange}
-												helperText={errors.identificationNumber}
+												error={
+													errors.identificationNumber &&
+													touched.identificationNumber &&
+													errors.identificationNumber
+												}
+												helperText={
+													errors.identificationNumber &&
+													touched.identificationNumber &&
+													errors.identificationNumber
+												}
+												onBlur={handleBlur}
 											/>
 										</Box>
 									</Grid>
 
 									<Grid item lg={4} sm={6} xs={12}>
 										<Box p={3}>
-											{/* <TextField
-												id='dateOfBirth'
-												name='identificationNumber'
-												fullWidth
-												required
-												label='dateOfBirth'
-												variant='outlined'
-												type='date'
-												value={values.dateOfBirth}
-												error={errors.dateOfBirth}
-												defaultValue='2017-05-24'
-												InputLabelProps={{
-													shrink: true,
-												}}
-												onChange={handleChange}
-											/> */}
 											<KeyboardDatePicker
 												disableToolbar
 												variant='inline'
-												style={{ width: '100%' }}
+												fullWidth
 												label='Fecha de Nacimiento'
 												id='dateOfBirth'
 												name='dateOfBirth'
@@ -565,11 +588,12 @@ const Add = () => {
 												variant='outlined'
 												label='Rango'
 												value={values.role}
-												error={errors.role}
 												onChange={handleChange}
 												disabled={!authorized}
 												select
-												helperText={errors.role}
+												error={errors.role && touched.role && errors.role}
+												helperText={errors.role && touched.role && errors.role}
+												onBlur={handleBlur}
 											>
 												{roles.map((option) => (
 													<MenuItem key={option.value} value={option.value}>
