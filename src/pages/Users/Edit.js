@@ -22,6 +22,7 @@ import { firebase, storage } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { useSnackbar } from 'notistack';
 import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
 	paperContainer: {
@@ -101,7 +102,7 @@ const Edit = ({ history }) => {
 	const [fileUrl, setFileUrl] = React.useState(null);
 	const [fileLocal, setFileLocal] = React.useState(null);
 
-	const [selectedDate, handleDateChange] = useState(new Date(1994, 1, 3));
+	const [selectedDate, setSelectedDate] = React.useState(new Date());
 	const { enqueueSnackbar } = useSnackbar();
 
 	const onFileChange = async (e) => {
@@ -110,6 +111,11 @@ const Edit = ({ history }) => {
 		const fileRef = storageRef.child(file.name);
 		setFileUrl(file);
 		setFileLocal(URL.createObjectURL(file));
+	};
+
+	const handleDateChange = (date) => {
+		setSelectedDate(date);
+		console.log(date);
 	};
 
 	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
@@ -211,6 +217,11 @@ const Edit = ({ history }) => {
 		state,
 		image,
 	}) => {
+		console.log({ updateAt: format(new Date(), 'dd/MM/yyyy') });
+		const phoneFiltered = parseFloat(phone.replace(/([595]{3})|[^0-9]/g, ''));
+		const identificationFiltered = parseFloat(
+			identificationNumber.replace(/[^\d]/g, ''),
+		);
 		debounce(async () => {
 			const storageRef = storage.ref();
 			const fileRef = storageRef.child(email);
@@ -229,12 +240,13 @@ const Edit = ({ history }) => {
 					city,
 					address2,
 					address1,
-					dateOfBirth,
+					dateOfBirth: format(selectedDate, 'dd/MM/yyyy'),
 					identificationNumber,
-					phone,
+					phone: phoneFiltered,
 					state,
 					authorization: authorized,
 					image: refImage,
+					updateAt: format(new Date(), 'dd/MM/yyyy'),
 				})
 				.then(() => {
 					setLoading(false);
@@ -274,7 +286,14 @@ const Edit = ({ history }) => {
 				validateOnBlur={false}
 				validationSchema={validation}
 			>
-				{({ values, errors, handleSubmit, handleChange, dirty }) => {
+				{({
+					values,
+					errors,
+					handleSubmit,
+					handleChange,
+					touched,
+					handleBlur,
+				}) => {
 					return (
 						<form onSubmit={handleSubmit} className={classes.root}>
 							<Paper variant='outlined' className={classes.paperContainer}>
@@ -361,7 +380,9 @@ const Edit = ({ history }) => {
 												id='name'
 												type='text'
 												value={values.name}
-												error={errors.name}
+												error={errors.name && touched.name && errors.name}
+												helperText={errors.name && touched.name && errors.name}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -378,7 +399,13 @@ const Edit = ({ history }) => {
 												id='lastName'
 												type='text'
 												value={values.lastName}
-												error={errors.lastName}
+												error={
+													errors.lastName && touched.lastName && errors.lastName
+												}
+												helperText={
+													errors.lastName && touched.lastName && errors.lastName
+												}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -398,7 +425,11 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Email'
 												value={values.email}
-												error={errors.email}
+												error={errors.email && touched.email && errors.email}
+												helperText={
+													errors.email && touched.email && errors.email
+												}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -418,8 +449,11 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Telefono'
 												value={values.phone}
-												error={errors.phone}
-												defaultValue='Hello World'
+												error={errors.phone && touched.phone && errors.phone}
+												helperText={
+													errors.phone && touched.phone && errors.phone
+												}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -439,7 +473,11 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Departamento'
 												value={values.state}
-												error={errors.state}
+												error={errors.state && touched.state && errors.state}
+												helperText={
+													errors.state && touched.state && errors.state
+												}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -459,7 +497,9 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Ciudad'
 												value={values.city}
-												error={errors.city}
+												error={errors.city && touched.city && errors.city}
+												helperText={errors.city && touched.city && errors.city}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -479,7 +519,13 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Direccion 1'
 												value={values.address1}
-												error={errors.address1}
+												error={
+													errors.address1 && touched.address1 && errors.address1
+												}
+												helperText={
+													errors.address1 && touched.address1 && errors.address1
+												}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -499,7 +545,13 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Direccion 2'
 												value={values.address2}
-												error={errors.address2}
+												error={
+													errors.address2 && touched.address2 && errors.address2
+												}
+												helperText={
+													errors.address2 && touched.address2 && errors.address2
+												}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -515,7 +567,17 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Numero de Documento'
 												value={values.identificationNumber}
-												error={errors.identificationNumber}
+												error={
+													errors.identificationNumber &&
+													touched.identificationNumber &&
+													errors.identificationNumber
+												}
+												helperText={
+													errors.identificationNumber &&
+													touched.identificationNumber &&
+													errors.identificationNumber
+												}
+												onBlur={handleBlur}
 												onChange={handleChange}
 											/>
 										</Box>
@@ -552,7 +614,9 @@ const Edit = ({ history }) => {
 												variant='outlined'
 												label='Rango'
 												value={values.role}
-												error={errors.role}
+												error={errors.role && touched.role && errors.role}
+												helperText={errors.role && touched.role && errors.role}
+												onBlur={handleBlur}
 												onChange={handleChange}
 												disabled={!authorized}
 												select

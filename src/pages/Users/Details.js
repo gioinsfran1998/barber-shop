@@ -104,6 +104,8 @@ const Details = () => {
 		phone,
 		authorization,
 		state,
+		createdAt,
+		updateAt,
 	} = history.location.state || {
 		name: ' ',
 		id: '',
@@ -120,6 +122,8 @@ const Details = () => {
 		phone: '',
 		authorization: '',
 		state: '',
+		createdAt: '',
+		updateAt: '',
 	};
 
 	console.log(history.location);
@@ -304,22 +308,7 @@ const Details = () => {
 											{email}
 										</TableCell>
 									</TableRow>
-									<TableRow selected={true}>
-										<TableCell
-											component='th'
-											scope='row'
-											classes={{ root: classes.tableRow }}
-											variant='head'
-										>
-											Fecha de Registro
-										</TableCell>
-										<TableCell
-											align='left'
-											classes={{ root: classes.tableRow }}
-										>
-											{'------'}
-										</TableCell>
-									</TableRow>
+
 									<TableRow selected={true}>
 										<TableCell
 											component='th'
@@ -352,6 +341,41 @@ const Details = () => {
 											{dateOfBirth}
 										</TableCell>
 									</TableRow>
+									<TableRow selected={true}>
+										<TableCell
+											component='th'
+											scope='row'
+											classes={{ root: classes.tableRow }}
+											variant='head'
+										>
+											Fecha de Registro
+										</TableCell>
+										<TableCell
+											align='left'
+											classes={{ root: classes.tableRow }}
+										>
+											{createdAt}
+										</TableCell>
+									</TableRow>
+
+									{updateAt == '' ? null : (
+										<TableRow selected={true}>
+											<TableCell
+												component='th'
+												scope='row'
+												classes={{ root: classes.tableRow }}
+												variant='head'
+											>
+												Fecha de Actualizacion
+											</TableCell>
+											<TableCell
+												align='left'
+												classes={{ root: classes.tableRow }}
+											>
+												{updateAt}
+											</TableCell>
+										</TableRow>
+									)}
 								</TableBody>
 								<Box p={4}>
 									<Button

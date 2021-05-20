@@ -19,7 +19,7 @@ import {
 
 import { useSnackbar } from 'notistack';
 import { useDebouncedCallback } from 'use-debounce';
-import { db, storage } from '../../firebase';
+import { db, storage, firebase } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 import { KeyboardDatePicker } from '@material-ui/pickers';
@@ -226,6 +226,8 @@ const Add = () => {
 					role,
 					authorization: authorized,
 					image: refImage,
+					createdAt: format(new Date(), 'dd/MM/yyyy'),
+					updateAt: '',
 				})
 				.then(() => {
 					handleClickPopUp('success', 'Usuario agregado con exito');
@@ -421,7 +423,6 @@ const Add = () => {
 												variant='outlined'
 												label='Telefono'
 												value={values.phone}
-												defaultValue='Hello World'
 												onChange={handleChange}
 												error={errors.phone && touched.phone && errors.phone}
 												helperText={
