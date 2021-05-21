@@ -53,6 +53,13 @@ export const streamUsersRole = (observer) => {
 	return db.collection('usersRole').onSnapshot(observer);
 };
 
+const roleTranslate = {
+	others: 'Otros',
+	admin: 'Administrador',
+	barber: 'Barbero',
+	cashier: 'Cajero',
+};
+
 const List = ({ history }) => {
 	const classes = useStyles();
 	const theme = useTheme();
@@ -128,7 +135,7 @@ const List = ({ history }) => {
 		},
 		{
 			field: 'role',
-			headerName: 'Rango',
+			headerName: 'Cargo',
 			flex: isDesktop ? 1 : 0,
 			headerAlign: 'center',
 			headerClassName: 'super-app-theme--header',
@@ -155,6 +162,7 @@ const List = ({ history }) => {
 			renderCell: (params) => (
 				<strong>
 					<IconButton
+						color='primary'
 						aria-label='details'
 						// onClick={() => history.push('/users/detail', params.row)}
 						onClick={() => handleDetailsUser(params)}
@@ -162,7 +170,11 @@ const List = ({ history }) => {
 						<InfoRounded />
 					</IconButton>
 
-					<IconButton aria-label='edit' onClick={() => handleEditUser(params)}>
+					<IconButton
+						color='primary'
+						aria-label='edit'
+						onClick={() => handleEditUser(params)}
+					>
 						<EditIcon />
 					</IconButton>
 				</strong>

@@ -55,6 +55,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const db = firebase.firestore();
+const roleTranslate = {
+	others: 'Otros',
+	admin: 'Administrador',
+	barber: 'Barbero',
+	cashier: 'Cajero',
+};
 
 const Details = () => {
 	const classes = useStyles();
@@ -106,6 +112,7 @@ const Details = () => {
 		state,
 		createdAt,
 		updateAt,
+		countryPhoneCode,
 	} = history.location.state || {
 		name: ' ',
 		id: '',
@@ -124,6 +131,7 @@ const Details = () => {
 		state: '',
 		createdAt: '',
 		updateAt: '',
+		countryPhoneCode: '',
 	};
 
 	console.log(history.location);
@@ -145,33 +153,11 @@ const Details = () => {
 							alignItems='center'
 						>
 							<Box mt={2}>
-								<input
-									accept='image/*'
-									className={classes.input}
-									id='contained-button-file'
-									multiple
-									type='file'
-								/>
 								<label htmlFor='contained-button-file'>
-									<ButtonBase
-										variant='contained'
-										color='primary'
-										component='span'
-									>
-										<CardMedia
-											className={classes.cardImageContainer}
-											image={image}
-											title='Live from space album cover'
-										/>
-										<PhotoCamera className={classes.imagePhoto} />
-									</ButtonBase>
-
-									<FormControlLabel
-										style={{ margin: '5px' }}
-										control={
-											<Checkbox checked={active} disabled color='primary' />
-										}
-										label='Activo'
+									<CardMedia
+										className={classes.cardImageContainer}
+										image={image}
+										title='Live from space album cover'
 									/>
 								</label>
 							</Box>
@@ -180,6 +166,38 @@ const Details = () => {
 						<TableContainer>
 							<Table className={classes.tableContainer}>
 								<TableBody>
+									<TableRow selected={true}>
+										<TableCell
+											component='th'
+											scope='row'
+											classes={{ root: classes.tableRow }}
+											variant='head'
+										>
+											Acceso
+										</TableCell>
+										<TableCell
+											align='left'
+											classes={{ root: classes.tableRow }}
+										>
+											{authorization == true ? 'Autorizado' : 'Denegado'}
+										</TableCell>
+									</TableRow>
+									<TableRow selected={true}>
+										<TableCell
+											component='th'
+											scope='row'
+											classes={{ root: classes.tableRow }}
+											variant='head'
+										>
+											Cargo
+										</TableCell>
+										<TableCell
+											align='left'
+											classes={{ root: classes.tableRow }}
+										>
+											{roleTranslate[role]}
+										</TableCell>
+									</TableRow>
 									<TableRow selected={true}>
 										<TableCell
 											component='th'
@@ -225,6 +243,7 @@ const Details = () => {
 											align='left'
 											classes={{ root: classes.tableRow }}
 										>
+											{`${countryPhoneCode} `}
 											{phone}
 										</TableCell>
 									</TableRow>

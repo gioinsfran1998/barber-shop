@@ -117,7 +117,7 @@ const Add = () => {
 		console.log(date);
 	};
 
-	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
+	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})|((97|96|99|98)\d{7})/;
 	const identificationValidation = /(^\d{1}\d{5,6})|(^\d{1}\.\d{3}\.\d{3})|(^\d{3}\.\d{3})/g;
 	// const dateOfBirthValidation = /(^\d{8})|(\d{2}[\.|\s]\d{2}[\.|\s]\d{4})|(\d{2}\/\d{2}\/\d{4})/;
 
@@ -200,7 +200,10 @@ const Add = () => {
 		const identificationFiltered = parseFloat(
 			identificationNumber.replace(/[^\d]/g, ''),
 		);
+
 		// const dateOfBirthFiltered = parseFloat(dateOfBirth.replace(/[^\d]/g, '/'));
+
+		console.log(format(selectedDate, 'dd/MM/yyyy, hh/mm/ss/bb'));
 
 		debounce(async () => {
 			const storageRef = storage.ref();
@@ -226,7 +229,7 @@ const Add = () => {
 					role,
 					authorization: authorized,
 					image: refImage,
-					createdAt: format(new Date(), 'dd/MM/yyyy'),
+					createdAt: format(new Date(), 'dd/MM/yyyy, hh:mm:ss bb'),
 					updateAt: '',
 				})
 				.then(() => {
@@ -276,9 +279,6 @@ const Add = () => {
 					handleBlur,
 					touched,
 				}) => {
-					console.log(errors);
-					console.log(handleChange);
-					console.log(handleBlur);
 					return (
 						<form onSubmit={handleSubmit} className={classes.root}>
 							<Paper variant='outlined' className={classes.paperContainer}>
@@ -587,7 +587,7 @@ const Add = () => {
 												required={authorized}
 												fullWidth
 												variant='outlined'
-												label='Rango'
+												label='Cargo'
 												value={values.role}
 												onChange={handleChange}
 												disabled={!authorized}

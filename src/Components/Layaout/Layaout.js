@@ -38,8 +38,6 @@ const Layout = (props) => {
 	const history = useHistory();
 	const theme = useTheme();
 
-	const { window } = props;
-
 	const handleDrawerToggle = (props) => {
 		setMobileOpen(!mobileOpen);
 	};

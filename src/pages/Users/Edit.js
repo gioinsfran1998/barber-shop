@@ -21,7 +21,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { firebase, storage } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { useSnackbar } from 'notistack';
-import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
@@ -118,7 +118,7 @@ const Edit = ({ history }) => {
 		console.log(date);
 	};
 
-	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})/;
+	const phoneValidation = /((097|096|099|098)\d{7})|((097|096|099|098)\d{1}\s{1}\d{6})|([\+]\d{3}\s{1}(99|98|97|96)\d{7})|((97|96|99|98)\d{7})/;
 	const identificationValidation = /(^\d{1}\d{5,6})|(^\d{1}\.\d{3}\.\d{3})|(^\d{3}\.\d{3})/g;
 
 	const validation = Yup.object().shape({
@@ -217,11 +217,15 @@ const Edit = ({ history }) => {
 		state,
 		image,
 	}) => {
+		console.log(identificationNumber);
 		console.log({ updateAt: format(new Date(), 'dd/MM/yyyy') });
-		const phoneFiltered = parseFloat(phone.replace(/([595]{3})|[^0-9]/g, ''));
-		const identificationFiltered = parseFloat(
-			identificationNumber.replace(/[^\d]/g, ''),
+
+		const phoneFiltered = String(phone).replace(/([595]{3})|[^0-9]/g, '');
+		const identificationFiltered = String(identificationNumber).replace(
+			/[^\d]/g,
+			'',
 		);
+
 		debounce(async () => {
 			const storageRef = storage.ref();
 			const fileRef = storageRef.child(email);
@@ -241,12 +245,12 @@ const Edit = ({ history }) => {
 					address2,
 					address1,
 					dateOfBirth: format(selectedDate, 'dd/MM/yyyy'),
-					identificationNumber,
-					phone: phoneFiltered,
+					identificationNumber: parseFloat(identificationFiltered),
+					phone: parseFloat(phoneFiltered),
 					state,
 					authorization: authorized,
 					image: refImage,
-					updateAt: format(new Date(), 'dd/MM/yyyy'),
+					updateAt: format(new Date(), 'dd/MM/yyyy, hh:mm:ss bb'),
 				})
 				.then(() => {
 					setLoading(false);
