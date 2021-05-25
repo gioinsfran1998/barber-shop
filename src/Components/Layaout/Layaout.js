@@ -19,6 +19,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
+import DesktopWindowsIcon from '@material-ui/icons/DesktopWindows';
 
 import { useHistory, withRouter, useLocation } from 'react-router-dom';
 
@@ -174,6 +175,15 @@ const Layout = (props) => {
 			icon: <SettingsIcon />,
 			onClick: () => {
 				history.push('/configuraciones');
+				setMobileOpen(false);
+			},
+		},
+		{
+			text: 'Monitor',
+			route: '/monitor',
+			icon: <DesktopWindowsIcon />,
+			onClick: () => {
+				history.push('/monitor');
 				setMobileOpen(false);
 			},
 		},

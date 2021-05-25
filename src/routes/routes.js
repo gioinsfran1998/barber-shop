@@ -4,6 +4,7 @@ import userList from '../pages/Users/List';
 import userAdd from '../pages/Users/Add';
 import userEdit from '../pages/Users/Edit';
 import userDetails from '../pages/Users/Details';
+import Monitor from '../pages/Monitor/Monitor';
 
 export const RoutesPublic = [
 	{
@@ -42,5 +43,10 @@ export const RoutesPrivates = [
 		path: '/users/details',
 		Component: userDetails,
 		exact: false,
+	},
+	{
+		path: '/monitor',
+		Component: Monitor,
+		exact: true,
 	},
 ];
