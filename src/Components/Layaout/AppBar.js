@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { useSelector } from 'react-redux';
-
 import {
 	AppBar,
 	Toolbar,
@@ -9,7 +7,6 @@ import {
 	Button,
 	IconButton,
 	makeStyles,
-	Switch,
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';

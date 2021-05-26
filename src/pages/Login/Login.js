@@ -1,18 +1,14 @@
 import {
 	Box,
 	Button,
-	Checkbox,
 	Container,
-	FormControlLabel,
 	Grid,
 	makeStyles,
 	TextField,
-	Avatar,
-	IconButton,
 } from '@material-ui/core';
 
 import React from 'react';
-import { auth, db, firebase } from '../../firebase';
+import { db, firebase } from '../../firebase';
 import loginImage from '../../assets/images/barber6.jpg';
 import gmailIcon from '../../assets/images/logingoogle.png';
 import { useDispatch } from 'react-redux';
@@ -186,7 +182,11 @@ const Login = (props) => {
 								variant='contained'
 								fullWidth
 								startIcon={
-									<img src={gmailIcon} className={classes.avatarGmail} />
+									<img
+										src={gmailIcon}
+										className={classes.avatarGmail}
+										alt='gmailicon'
+									/>
 								}
 								onClick={() => onLogin()}
 							>

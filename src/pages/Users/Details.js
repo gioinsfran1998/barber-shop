@@ -10,10 +10,7 @@ import {
 	Box,
 	Typography,
 	Divider,
-	ButtonBase,
 	CardMedia,
-	Checkbox,
-	FormControlLabel,
 	Table,
 	TableContainer,
 	TableRow,
@@ -21,7 +18,6 @@ import {
 	TableBody,
 	Button,
 } from '@material-ui/core';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 const useStyles = makeStyles((theme) => ({
 	rootPaper: {
@@ -98,7 +94,7 @@ const Details = () => {
 		name,
 		id,
 		image,
-		active,
+
 		lastName,
 		email,
 		role,
@@ -117,7 +113,7 @@ const Details = () => {
 		name: ' ',
 		id: '',
 		image: '',
-		active: '',
+
 		lastName: '',
 		email: '',
 		role: '',
@@ -179,7 +175,7 @@ const Details = () => {
 											align='left'
 											classes={{ root: classes.tableRow }}
 										>
-											{authorization == true ? 'Autorizado' : 'Denegado'}
+											{authorization === true ? 'Autorizado' : 'Denegado'}
 										</TableCell>
 									</TableRow>
 									<TableRow selected={true}>
@@ -377,7 +373,7 @@ const Details = () => {
 										</TableCell>
 									</TableRow>
 
-									{updateAt == '' ? null : (
+									{updateAt === '' ? null : (
 										<TableRow selected={true}>
 											<TableCell
 												component='th'

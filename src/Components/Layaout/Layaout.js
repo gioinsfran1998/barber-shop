@@ -26,6 +26,9 @@ import { useHistory, withRouter, useLocation } from 'react-router-dom';
 import Profile from './Profile';
 import AppBar from './AppBar';
 import Drawer from './Drawer';
+import { showLayoutAction } from '../../redux/enviroment';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const Layout = (props) => {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -34,10 +37,13 @@ const Layout = (props) => {
 		collapseStock: false,
 	});
 
+	const showLayout = useSelector((store) => store.enviroment.showLayout);
+
 	const location = useLocation();
 	const classes = useStyles();
 	const history = useHistory();
 	const theme = useTheme();
+	const dispatch = useDispatch();
 
 	const handleDrawerToggle = (props) => {
 		setMobileOpen(!mobileOpen);
@@ -185,6 +191,7 @@ const Layout = (props) => {
 			onClick: () => {
 				history.push('/monitor');
 				setMobileOpen(false);
+				dispatch(showLayoutAction(false));
 			},
 		},
 	];
@@ -269,22 +276,27 @@ const Layout = (props) => {
 		</div>
 	);
 
+	console.log(showLayout);
+
 	return (
 		<div className={classes.root}>
-			<CssBaseline />
+			{showLayout && (
+				<>
+					<CssBaseline />
 
-			<AppBar
-				mobileOpen={mobileOpen}
-				setMobileOpen={setMobileOpen}
-				handleDrawerToggle={() => handleDrawerToggle()}
-			/>
-
-			<Drawer
-				drawer={drawer}
-				mobileOpen={mobileOpen}
-				setMobileOpen={setMobileOpen}
-				handleDrawerToggle={() => handleDrawerToggle()}
-			/>
+					<AppBar
+						mobileOpen={mobileOpen}
+						setMobileOpen={setMobileOpen}
+						handleDrawerToggle={() => handleDrawerToggle()}
+					/>
+					<Drawer
+						drawer={drawer}
+						mobileOpen={mobileOpen}
+						setMobileOpen={setMobileOpen}
+						handleDrawerToggle={() => handleDrawerToggle()}
+					/>
+				</>
+			)}
 		</div>
 	);
 };

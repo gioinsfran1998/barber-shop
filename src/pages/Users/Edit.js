@@ -107,8 +107,8 @@ const Edit = ({ history }) => {
 
 	const onFileChange = async (e) => {
 		const file = e.target.files[0];
-		const storageRef = storage.ref();
-		const fileRef = storageRef.child(file.name);
+		// const storageRef = storage.ref();
+		// const fileRef = storageRef.child(file.name);
 		setFileUrl(file);
 		setFileLocal(URL.createObjectURL(file));
 	};

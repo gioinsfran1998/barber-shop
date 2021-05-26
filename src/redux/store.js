@@ -4,11 +4,13 @@ import storage from 'redux-persist/lib/storage';
 
 import rootUser from './user';
 import rootAuth from './auth';
+import rootEnviroment from './enviroment';
 
 function configureStore(initialState = {}) {
 	const reducer = combineReducers({
 		auth: persistReducer({ key: 'auth', storage }, rootAuth),
 		user: persistReducer({ key: 'user', storage }, rootUser),
+		enviroment: persistReducer({ key: 'enviroment', storage }, rootEnviroment),
 	});
 
 	const store = createStore(

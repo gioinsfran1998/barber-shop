@@ -1,6 +1,8 @@
 import React from 'react';
 import { makeStyles, Container } from '@material-ui/core';
 import BreadCrumb from '../Breadcrumb/BreadCrumb';
+import Layaout from '../Layaout/Layaout';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
 	containerMain: {
@@ -19,15 +21,20 @@ const useStyles = makeStyles((theme) => ({
 
 const Main = ({ children, logged }) => {
 	const classes = useStyles();
-
+	const user = useSelector((state) => state.user.user);
+	// const showLayout = useSelector((store) => store.enviroment.showLayout);
 	return (
-		<div className={classes.backgroundMain}>
-			<Container maxWidth='lg' className={classes.containerMain}>
-				{logged && <BreadCrumb />}
+		<>
+			{user && <Layaout />}
 
-				{children}
-			</Container>
-		</div>
+			<div className={classes.backgroundMain}>
+				<Container maxWidth='lg' className={classes.containerMain}>
+					{logged && <BreadCrumb />}
+
+					{children}
+				</Container>
+			</div>
+		</>
 	);
 };
 

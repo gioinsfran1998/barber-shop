@@ -1,14 +1,19 @@
 import {
 	Avatar,
 	Box,
-	Divider,
 	Grid,
+	IconButton,
 	makeStyles,
 	Paper,
 	Typography,
 } from '@material-ui/core';
 import React from 'react';
 import InfoIcon from '@material-ui/icons/Info';
+import { isEmpty } from 'lodash';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { showLayoutAction } from '../../redux/enviroment';
 
 const useStyles = makeStyles((theme) => ({
 	paperContainer: {
@@ -67,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+// Filter state == 2
 const infoTiquets = [
 	{
 		id: '345334',
@@ -76,25 +82,48 @@ const infoTiquets = [
 		state: 0,
 	},
 	{
-		id: '145234',
+		id: '415234',
 		name: 'Victor Rolon',
 		service: 'Corte y Ceja',
 		barber: 'Miguel Lopez',
-		state: 1,
+		state: 2,
+	},
+	{
+		id: '145234',
+		name: 'Walter Pereira',
+		service: 'Ceja',
+		barber: 'Jonas Guiterres',
+		state: 2,
 	},
 	{
 		id: '012332',
 		name: 'Diego Gimenez',
 		service: 'Corte',
 		barber: 'Alberto Martinez',
-		state: 2,
+		state: 1,
 	},
 ];
 
 const Monitor = () => {
+	const history = useHistory();
+	const dispatch = useDispatch();
 	const classes = useStyles();
+	const existState2 = infoTiquets.filter((ticket) => {
+		return ticket.state === 2;
+	});
+
 	return (
 		<div>
+			<IconButton
+				aria-label='close'
+				onClick={() => {
+					console.log(history);
+					history.push('/');
+					dispatch(showLayoutAction(true));
+				}}
+			>
+				<ArrowBackIosIcon />
+			</IconButton>
 			<Paper variant='outlined' className={classes.paperContainer}>
 				<Paper variant='outlined'>
 					<Box
@@ -123,45 +152,87 @@ const Monitor = () => {
 						<Grid
 							container
 							justify='space-evenly'
-							alignItems='center'
+							// alignItems='stretch'
 							style={{
 								// backgroundColor: 'orange',
 
 								height: '100%',
 							}}
 						>
-							<Grid
-								item
-								style={{
-									backgroundColor: 'green',
-									width: '400px',
-									height: '260px',
-									margin: '10px',
-								}}
-							>
-								<Typography variant='h1' color='initial'>
-									Hola
-								</Typography>
-							</Grid>
-							<Grid
-								item
-								style={{
-									backgroundColor: 'green',
-									width: '400px',
-									height: '260px',
-									margin: '10px',
-								}}
-							>
-								<Typography variant='h1' color='initial'>
-									Hola 2
-								</Typography>
-							</Grid>
+							{isEmpty(existState2) && (
+								<Grid
+									item
+									style={{
+										// backgroundColor: 'green',
+										// width: '400px',
+										// height: '260px',
+										margin: '10px',
+									}}
+								>
+									<Paper
+										style={{
+											backgroundColor: 'orange',
+											width: '400px',
+											height: '260px',
+											padding: '5px',
+											display: 'flex',
+										}}
+									>
+										<Typography variant='h2' color='initial'>
+											Sin llamada Actual
+										</Typography>
+									</Paper>
+								</Grid>
+							)}
+
+							{infoTiquets.map(({ name, id, barber, state, service }) => {
+								return (
+									state === 2 && (
+										<Grid
+											item
+											style={{
+												// backgroundColor: 'green',
+												// width: '400px',
+												// height: '260px',
+												margin: '10px',
+											}}
+										>
+											<Paper
+												style={{
+													backgroundColor: 'green',
+													width: '450px',
+													height: '300px',
+													padding: '5px',
+													display: 'flex',
+													flexDirection: 'column',
+													justifyContent: 'center',
+													alignItems: 'center',
+												}}
+											>
+												<Typography variant='h2' color='initial'>
+													N° {id}
+												</Typography>
+												<Typography variant='h4' color='initial'>
+													Cliente: {name}
+												</Typography>
+												<Typography variant='h4' color='initial'>
+													Barbero: {barber}
+												</Typography>
+												<Typography variant='h4' color='initial'>
+													Servicio: {service}
+												</Typography>
+											</Paper>
+										</Grid>
+									)
+								);
+							})}
 						</Grid>
 					</Box>
 				</Paper>
 				<Grid
 					container
 					justify='space-evenly'
+					xs={12}
 					// alignItems='center'
 					style={{
 						width: '100%',
@@ -170,126 +241,118 @@ const Monitor = () => {
 						padding: '5px',
 					}}
 				>
-					{infoTiquets.map(({ name, state, id }) => {
-						return state === 1 ? (
-							<Grid
-								item
-								container
-								sm={6}
-								xs={12}
-								direction='column'
-								alignContent='center'
-								// alignItems='stretch'
-								style={{ padding: '10px' }}
+					<Grid item sm={6} xs={12}>
+						<Grid item>
+							<Typography
+								variant='h4'
+								color='initial'
+								style={{ textAlign: 'center' }}
 							>
-								<Paper
-									variant='outlined'
-									style={{
-										margin: '10px',
-										maxWidth: '500px',
-										width: '100%',
-									}}
+								Proximas llamadas
+							</Typography>
+						</Grid>
+
+						{infoTiquets.map(({ name, state, id }) => {
+							return state === 1 ? (
+								<Grid
+									item
+									container
+									// sm={12}
+									xs={12}
+									direction='column'
+									alignContent='center'
+									// alignItems='stretch'
+									style={{ padding: '10px' }}
 								>
-									<Typography
-										variant='h4'
-										color='initial'
-										style={{ textAlign: 'center' }}
+									<Paper
+										// variant='outlined'
+										style={{
+											backgroundColor: 'yellow',
+
+											margin: '10px',
+											maxWidth: '500px',
+											width: '100%',
+											display: 'flex',
+											padding: '10px',
+											height: '90px',
+											justifyContent: 'center',
+											alignItems: 'center',
+										}}
 									>
-										Proximas llamadas
-									</Typography>
-								</Paper>
-								<Paper
-									// variant='outlined'
-									style={{
-										backgroundColor: 'yellow',
-										padding: '5px',
-										margin: '10px',
-										maxWidth: '500px',
-										width: '100%',
-										display: 'flex',
-										padding: '10px',
-										height: '90px',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<Box className={classes.boxContainer}>
-										<Typography variant='h5' color='initial'>
-											{id}
-										</Typography>
-										<Box display='flex' flexWrap='wrap' alignItems='center'>
-											<Typography variant='h6' color='initial'>
-												Barbero: {name}
+										<Box className={classes.boxContainer}>
+											<Typography variant='h5' color='initial'>
+												{id}
 											</Typography>
+											<Box display='flex' flexWrap='wrap' alignItems='center'>
+												<Typography variant='h6' color='initial'>
+													Barbero: {name}
+												</Typography>
+											</Box>
 										</Box>
-									</Box>
-									<Avatar className={classes.avatarContainer}>
-										<InfoIcon classes={{ root: classes.iconInfo }} />
-									</Avatar>
-								</Paper>
-							</Grid>
-						) : null;
-					})}
-					{infoTiquets.map(({ name, state, id }) => {
-						return state === 0 ? (
-							<Grid
-								item
-								container
-								sm={6}
-								xs={12}
-								direction='column'
-								alignContent='center'
-								// alignItems='stretch'
-								style={{ padding: '10px' }}
+										<Avatar className={classes.avatarContainer}>
+											<InfoIcon classes={{ root: classes.iconInfo }} />
+										</Avatar>
+									</Paper>
+								</Grid>
+							) : null;
+						})}
+					</Grid>
+
+					<Grid item xs={6}>
+						<Grid item xs={12}>
+							<Typography
+								variant='h4'
+								color='initial'
+								style={{ textAlign: 'center' }}
 							>
-								<Paper
-									variant='outlined'
-									style={{
-										margin: '10px',
-										maxWidth: '500px',
-										width: '100%',
-									}}
+								Ultimas llamadas
+							</Typography>
+						</Grid>
+
+						{infoTiquets.map(({ name, state, id }) => {
+							return state === 0 ? (
+								<Grid
+									item
+									container
+									xs={12}
+									direction='column'
+									alignContent='center'
+									// alignItems='stretch'
+									style={{ padding: '10px' }}
 								>
-									<Typography
-										variant='h4'
-										color='initial'
-										style={{ textAlign: 'center' }}
+									<Paper
+										// variant='outlined'
+										style={{
+											backgroundColor: 'red',
+
+											margin: '10px',
+											maxWidth: '500px',
+											width: '100%',
+											display: 'flex',
+											padding: '10px',
+											height: '90px',
+											justifyContent: 'center',
+											alignItems: 'center',
+										}}
 									>
-										Ultimas llamadas
-									</Typography>
-								</Paper>
-								<Paper
-									// variant='outlined'
-									style={{
-										backgroundColor: 'red',
-										padding: '5px',
-										margin: '10px',
-										maxWidth: '500px',
-										width: '100%',
-										display: 'flex',
-										padding: '10px',
-										height: '90px',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<Box className={classes.boxContainer}>
-										<Typography variant='h5' color='initial'>
-											{id}
-										</Typography>
-										<Box display='flex' flexWrap='wrap' alignItems='center'>
-											<Typography variant='h6' color='initial'>
-												Barbero: {name}
+										<Box className={classes.boxContainer}>
+											<Typography variant='h5' color='initial'>
+												{id}
 											</Typography>
+											<Box display='flex' flexWrap='wrap' alignItems='center'>
+												<Typography variant='h6' color='initial'>
+													Barbero: {name}
+												</Typography>
+											</Box>
 										</Box>
-									</Box>
-									<Avatar className={classes.avatarContainer}>
-										<InfoIcon classes={{ root: classes.iconInfo }} />
-									</Avatar>
-								</Paper>
-							</Grid>
-						) : null;
-					})}
+										<Avatar className={classes.avatarContainer}>
+											<InfoIcon classes={{ root: classes.iconInfo }} />
+										</Avatar>
+									</Paper>
+								</Grid>
+							) : null;
+						})}
+					</Grid>
 				</Grid>
 			</Paper>
 		</div>

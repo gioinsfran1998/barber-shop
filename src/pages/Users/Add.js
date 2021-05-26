@@ -19,7 +19,7 @@ import {
 
 import { useSnackbar } from 'notistack';
 import { useDebouncedCallback } from 'use-debounce';
-import { db, storage, firebase } from '../../firebase';
+import { db, storage } from '../../firebase';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 import { KeyboardDatePicker } from '@material-ui/pickers';
@@ -104,8 +104,8 @@ const Add = () => {
 
 	const onFileChange = async (e) => {
 		const file = e.target.files[0];
-		const storageRef = storage.ref();
-		const fileRef = storageRef.child(file && file.name);
+		// const storageRef = storage.ref();
+		// const fileRef = storageRef.child(file && file.name);
 		setFileUrl(file);
 		setFileLocal(URL.createObjectURL(file));
 	};

@@ -4,17 +4,21 @@ import { useSelector } from 'react-redux';
 import PrivateRoutes from '././PrivateRoutes';
 import PublicRoutes from './PublicRoutes';
 import { RoutesPrivates, RoutesPublic } from './routes';
-import Layaout from '../Components/Layaout/Layaout';
+// import Layaout from '../Components/Layaout/Layaout';
 import Main from '../Components/Main/Main';
 import { createBrowserHistory } from 'history';
 
 export const history = createBrowserHistory();
 
 const Routes = () => {
+	// const showLayout = useSelector((store) => store.enviroment.showLayout);
 	const user = useSelector((state) => state.user.user);
+
 	return (
 		<Router>
-			{user && <Layaout />}
+			{/* {user && <Layaout />} */}
+			{/* {showLayout && <Layaout />} */}
+
 			<Switch>
 				{RoutesPublic.map(({ path, Component }) => {
 					return (

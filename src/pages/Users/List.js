@@ -156,7 +156,7 @@ const List = ({ history }) => {
 			headerAlign: 'center',
 			headerClassName: 'super-app-theme--header',
 			flex: isDesktop ? 1 : 0,
-			align: 'right',
+
 			align: 'center',
 
 			renderCell: (params) => (
