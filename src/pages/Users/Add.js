@@ -203,7 +203,7 @@ const Add = () => {
 
 		// const dateOfBirthFiltered = parseFloat(dateOfBirth.replace(/[^\d]/g, '/'));
 
-		console.log(format(selectedDate, 'dd/MM/yyyy, hh/mm/ss/bb'));
+		// console.log(format(selectedDate, 'dd/MM/yyyy, hh/mm/ss/bb'));
 
 		debounce(async () => {
 			const storageRef = storage.ref();

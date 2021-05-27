@@ -22,18 +22,23 @@ const useStyles = makeStyles((theme) => ({
 const Main = ({ children, logged }) => {
 	const classes = useStyles();
 	const user = useSelector((state) => state.user.user);
-	// const showLayout = useSelector((store) => store.enviroment.showLayout);
+	const showLayout = useSelector((store) => store.enviroment.showLayout);
 	return (
 		<>
 			{user && <Layaout />}
 
-			<div className={classes.backgroundMain}>
-				<Container maxWidth='lg' className={classes.containerMain}>
-					{logged && <BreadCrumb />}
+			{showLayout ? (
+				<div className={classes.backgroundMain}>
+					<Container maxWidth='lg' className={classes.containerMain}>
+						{/* {logged && <BreadCrumb />} */}
+						{showLayout && <BreadCrumb />}
 
-					{children}
-				</Container>
-			</div>
+						{children}
+					</Container>
+				</div>
+			) : (
+				<>{children}</>
+			)}
 		</>
 	);
 };

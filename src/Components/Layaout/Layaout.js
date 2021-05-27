@@ -279,9 +279,9 @@ const Layout = (props) => {
 	console.log(showLayout);
 
 	return (
-		<div className={classes.root}>
+		<>
 			{showLayout && (
-				<>
+				<div className={classes.root}>
 					<CssBaseline />
 
 					<AppBar
@@ -295,9 +295,9 @@ const Layout = (props) => {
 						setMobileOpen={setMobileOpen}
 						handleDrawerToggle={() => handleDrawerToggle()}
 					/>
-				</>
+				</div>
 			)}
-		</div>
+		</>
 	);
 };
 
