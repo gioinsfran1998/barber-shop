@@ -10,14 +10,16 @@ import {
 
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
+const drawerWidth = 240;
+
 const useStyles = makeStyles((theme) => ({
 	drawer: {
 		[theme.breakpoints.up('md')]: {
 			width: 240,
 			flexShrink: 0,
 		},
-		// color: '#fafafa',
 	},
+
 	logoContainer: {
 		width: '100%',
 		padding: '20px',
@@ -28,13 +30,8 @@ const useStyles = makeStyles((theme) => ({
 		width: '150px',
 	},
 	drawerPaper: {
-		// color: '#fafafa',
-		// backgroundColor:
-		//   theme.palette.type === "dark"
-		//     ? theme.palette.background.paper
-		//     : theme.palette.secondary.main,
 		backgroundColor: '#fafafa',
-		width: 240,
+		width: drawerWidth,
 		[theme.breakpoints.up('md')]: {
 			marginTop: theme.mixins.toolbar.minHeight,
 		},

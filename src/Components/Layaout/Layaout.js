@@ -276,8 +276,6 @@ const Layout = (props) => {
 		</div>
 	);
 
-	console.log(showLayout);
-
 	return (
 		<>
 			{showLayout && (
