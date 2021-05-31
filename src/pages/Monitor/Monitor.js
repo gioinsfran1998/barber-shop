@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-import InfoIcon from '@material-ui/icons/Info';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 import { isEmpty } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showLayoutAction } from '../../redux/enviroment';
-import { format } from 'date-fns';
+
 import {
-	AppBar,
-	Avatar,
 	Box,
+	Button,
 	Container,
-	CssBaseline,
-	Grid,
 	IconButton,
 	makeStyles,
 	Paper,
@@ -25,15 +20,12 @@ import {
 
 const useStyles = makeStyles((theme) => ({
 	container: {
-		// display: 'flex',
-		height: '100%',
-		width: '100%',
-		background: '#0f0c29',
-		// background:
-		// 	'-webkit-linear-gradient(to right, #24243e, #302b63, #0f0c29)',
-		// background:
-		// 	'linear-gradient(to right, #24243e, #302b63, #0f0c29)',
-		// minHeight: '100vh',
+		backgroundColor: theme.palette.primary.main,
+		height: '60px',
+		padding: '10px',
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center',
 	},
 	paperContainer: {
 		padding: theme.spacing(6),
@@ -65,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 		margin: '10px',
 		borderRadius: '50%',
 		borderColor: theme.palette.divider,
-		border: '2px solid',
+		// border: '2px solid',
 		width: '150px',
 		height: '150px',
 	},
@@ -80,87 +72,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // Filter state == 2
-const infoTiquets = [
-	{
-		id: '345334',
-		name: 'Juan Roman',
-		service: 'Corte',
-		barber: 'Jorge Gauto',
-		state: 1,
-	},
-	{
-		id: '415234',
-		name: 'Victor Rolon',
-		service: 'Corte y Ceja',
-		barber: 'Miguel Lopez',
-		state: 1,
-	},
-	{
-		id: '345334',
-		name: 'Juan Roman',
-		service: 'Corte',
-		barber: 'Jorge Gauto',
-		state: 0,
-	},
-	{
-		id: '415234',
-		name: 'Victor Rolon',
-		service: 'Corte y Ceja',
-		barber: 'Miguel Lopez',
-		state: 0,
-	},
-	// {
-	// 	id: '145234',
-	// 	name: 'Walter Pereira',
-	// 	service: 'Ceja',
-	// 	barber: 'Jonas Guiterres',
-	// 	state: 1,
-	// },
-	// {
-	// 	id: '012332',
-	// 	name: 'Diego Gimenez',
-	// 	service: 'Corte',
-	// 	barber: 'Alberto Martinez',
-	// 	state: 1,
-	// },
-	// {
-	// 	id: 'AD2331',
-	// 	name: 'Mateus Aquino robles joa',
-	// 	service: 'Barba',
-	// 	barber: 'Alberto Martinez',
-	// 	state: 0,
-	// },
-	// {
-	// 	id: '0FD132',
-	// 	name: 'Martin Gonzalez',
-	// 	service: 'Lavado',
-	// 	barber: 'Alberto Martinez',
-	// 	state: 0,
-	// },
-	// {
-	// 	id: 'AD2331',
-	// 	name: 'Mateus Aquino',
-	// 	service: 'Barba',
-	// 	barber: 'Alberto Martinez',
-	// 	state: 0,
-	// },
-	// {
-	// 	id: '0FD132',
-	// 	name: 'Martin Gonzalez',
-	// 	service: 'Lavado',
-	// 	barber: 'Alberto Martinez',
-	// 	state: 0,
-	// },
-	// {
-	// 	id: '0FD132',
-	// 	name: 'Martin Gonzalez',
-	// 	service: 'Lavado',
-	// 	barber: 'Alberto Martinez',
-	// 	state: 0,
-	// },
-];
+
+/*
+
+(0)Amarillo: Cancelado
+(1)Red: Finalizando...
+(2)Green: Llamada actual
+(3)orange: Pendiente
+
+
+*/
 
 const ticketColor = [
+	{
+		state: 0,
+		backgroundColor: 'yellow',
+	},
 	{
 		state: 1,
 		backgroundColor: 'red',
@@ -168,11 +95,11 @@ const ticketColor = [
 	},
 	{
 		state: 2,
-		// backgroundColor: 'green',
+		backgroundColor: 'green',
 	},
 	{
-		state: 0,
-		// backgroundColor: 'orange',
+		state: 3,
+		backgroundColor: 'orange',
 	},
 ];
 
@@ -188,13 +115,59 @@ const getCurrentTime = () => {
 
 const Monitor = () => {
 	const [dateTime, setDateTime] = useState(getCurrentTime());
-	const [showTime, setShowTime] = useState('');
-
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const classes = useStyles();
+
+	const [stateBox, setStateBox] = useState(3);
+
+	const infoTiquets = [
+		{
+			id: '345334',
+			name: 'Juan Roman',
+			service: 'Corte',
+			barber: 'Jorge Gauto',
+			state: 0,
+		},
+		{
+			id: '415234',
+			name: 'Victor Rolon Espinola',
+			service: 'Corte y Ceja',
+			barber: 'Miguel Lopez ',
+			state: 0,
+		},
+		{
+			id: '23203',
+			name: 'Jamon Jonas',
+			service: 'Corte',
+			barber: 'Jorge Gauto',
+			state: 0,
+		},
+		{
+			id: '415234',
+			name: 'Victor Rolon',
+			service: 'Corte y Ceja',
+			barber: 'Miguel Lopez',
+			state: 2,
+		},
+		{
+			id: '145234',
+			name: 'Walter Pereira',
+			service: 'Ceja',
+			barber: 'Jonas Guiterres',
+			state: 2,
+		},
+		{
+			id: '23231',
+			name: 'Gusti Lomaquiz',
+			service: 'Ceja',
+			barber: 'Jonas Guiterres',
+			state: stateBox,
+		},
+	];
+
 	const existState2 = infoTiquets.filter((ticket) => {
-		return ticket.state === 2;
+		return ticket.state === 1;
 	});
 
 	useEffect(() => {
@@ -204,17 +177,16 @@ const Monitor = () => {
 	}, []);
 
 	return (
-		<Box style={{ display: 'block', width: '100%', height: '100%' }}>
-			<Box
-				style={{
-					backgroundColor: '#8c8c8c',
-					height: '60px',
-					padding: '10px',
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-				}}
-			>
+		<Box
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
+				minHeight: '100%',
+				// backgroundColor: 'red',
+			}}
+		>
+			<Box className={classes.container}>
 				<IconButton
 					aria-label='close'
 					onClick={() => {
@@ -226,269 +198,227 @@ const Monitor = () => {
 					<ArrowBackIosIcon style={{ color: 'white' }} />
 				</IconButton>
 
-				<Typography variant='h6' style={{ paddingRight: '40px' }}>
+				<Button variant='contained'>Cancelar</Button>
+				<Button variant='contained'>Llamar</Button>
+				<Button variant='contained'>Pendiente</Button>
+
+				<Typography
+					variant='h6'
+					style={{ paddingRight: '40px', color: 'white' }}
+				>
 					{dateTime}
 				</Typography>
 			</Box>
-			<div style={{ backgroundColor: 'red', width: '100%' }}>
-				{/* <Box
-				style={{
-					backgroundColor: '#8c8c8c',
-					height: '60px',
-					padding: '10px',
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-				}}
-			>
-				<IconButton
-					aria-label='close'
-					onClick={() => {
-						console.log(history);
-						history.push('/');
-						dispatch(showLayoutAction(true));
-					}}
-				>
-					<ArrowBackIosIcon style={{ color: 'white' }} />
-				</IconButton>
-
-				<Typography variant='h6' style={{ paddingRight: '40px' }}>
-					{dateTime}
-				</Typography>
-			</Box> */}
-
-				<Box
+			<Container maxWidth='xl' style={{ height: '100%', padding: '20px' }}>
+				<Paper
+					variant='outlined'
 					style={{
-						padding: '20px',
-						width: '100%',
 						height: '100%',
 						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
+						flexWrap: 'wrap',
+						justifyContent: 'space-evenly',
 					}}
 				>
-					<Paper
-						variant='outlined'
+					<Box
 						style={{
+							width: '100%',
+							maxWidth: '700px',
+							height: '100%',
+							padding: '20px',
 							display: 'flex',
-							minHeight: '400px',
-							minWidth: '400px',
 							justifyContent: 'center',
 							alignItems: 'center',
-							// height: '100%',
 						}}
 					>
-						{infoTiquets.map(({ name, id, barber, state, service }) => {
-							return (
-								state === 0 && (
-									<Paper
+						<Paper
+							variant='outlined'
+							style={{
+								width: '100%',
+								minHeight: '600px',
+								margin: '0 auto',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								flexWrap: 'wrap',
+							}}
+						>
+							{isEmpty(existState2) && (
+								<Paper
+									style={{
+										margin: '10px',
+										backgroundColor: 'orange',
+										minWidth: '200px',
+										maxWidth: '300px',
+										width: '100%',
+										height: '300px',
+										padding: '5px',
+										display: 'flex',
+										flexDirection: 'column',
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}
+								>
+									<Typography variant='h4' color='initial'>
+										Sin llamada Actual
+									</Typography>
+								</Paper>
+							)}
+							{infoTiquets.map(({ name, id, barber, state, service }) => {
+								return (
+									state === 1 && (
+										<Paper
+											style={{
+												margin: '10px',
+												backgroundColor: 'red',
+												minWidth: '200px',
+												maxWidth: '300px',
+												width: '100%',
+												height: '300px',
+												padding: '5px',
+												display: 'flex',
+												flexDirection: 'column',
+												justifyContent: 'center',
+												alignItems: 'center',
+											}}
+										>
+											<Typography variant='h3' color='secondary'>
+												N° {id}
+											</Typography>
+											<Typography variant='h6' color='secondary'>
+												Cliente: {name}
+											</Typography>
+											<Typography variant='h6' color='secondary'>
+												Barbero: {barber}
+											</Typography>
+											<Typography variant='h6' color='secondary'>
+												Servicio: {service}
+											</Typography>
+										</Paper>
+									)
+								);
+							})}
+						</Paper>
+					</Box>
+					<Box
+						style={{
+							width: '100%',
+							maxWidth: '600px',
+							height: '100%',
+							padding: '20px',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}
+					>
+						<Paper
+							variant='outlined'
+							style={{
+								width: '100%',
+								maxWidth: '600px',
+								height: '100%',
+								minHeight: '300px',
+								padding: '20px',
+								margin: '0 auto',
+							}}
+						>
+							<Box
+								style={{
+									display: 'flex',
+									alignItems: 'center',
+									height: '70px',
+									margin: '10px',
+									padding: '20px',
+								}}
+							>
+								<Box style={{ width: '50%' }}>
+									<Typography
+										variant='h5'
+										color='initial'
 										style={{
-											margin: '10px',
-											backgroundColor: 'red',
-											minWidth: '200px',
-											maxWidth: '300px',
-											width: '100%',
-											height: '300px',
-											padding: '5px',
+											width: '200px',
 											display: 'flex',
-											flexDirection: 'column',
 											justifyContent: 'center',
-											alignItems: 'center',
 										}}
 									>
-										<Typography variant='h3' color='initial'>
-											N° {id}
-										</Typography>
-										<Typography variant='h6' color='initial'>
-											Cliente: {name}
-										</Typography>
-										<Typography variant='h6' color='initial'>
-											Barbero: {barber}
-										</Typography>
-										<Typography variant='h6' color='initial'>
-											Servicio: {service}
-										</Typography>
+										Turno
+									</Typography>
+								</Box>
+								<Box
+									style={{
+										width: '50%',
+									}}
+								>
+									<Typography
+										variant='h5'
+										color='initial'
+										style={{
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+										}}
+									>
+										Cliente
+									</Typography>
+								</Box>
+							</Box>
+
+							{infoTiquets.map(({ name, state, id }) => {
+								return (
+									<Paper
+										variant='outlined'
+										style={{
+											margin: '10px',
+											transition: 'background-color 0.5s ease',
+											backgroundColor:
+												ticketColor[state].backgroundColor || 'inherit',
+											// backgroundColor: 'green',
+											opacity: state === 1 ? 0 : 2,
+											// opacity: state === 1 ? 0 : 2,
+											// transition de agregar/quitar
+											transition: 'opacity 1s ease',
+
+											color: ticketColor[state].color || 'inherit',
+											display: 'flex',
+											alignItems: 'center',
+											height: '80px',
+										}}
+									>
+										<Box style={{ width: '50%' }}>
+											<Typography
+												color='initial'
+												style={{
+													width: '200px',
+													display: 'flex',
+													justifyContent: 'flex-start',
+													fontSize: '25px',
+													paddingLeft: '40px',
+												}}
+											>
+												{id}
+											</Typography>
+										</Box>
+										<Box style={{ width: '50%' }}>
+											<Typography
+												color='initial'
+												style={{
+													width: '200px',
+													display: 'flex',
+													justifyContent: 'flex-start',
+													fontSize: '25px',
+												}}
+											>
+												{name}
+											</Typography>
+										</Box>
 									</Paper>
-								)
-							);
-						})}
-					</Paper>
-				</Box>
-			</div>
+								);
+							})}
+						</Paper>
+					</Box>
+				</Paper>
+			</Container>
 		</Box>
 	);
 };
 
 export default Monitor;
-
-// <div className={classes.container}>
-// 	<Container maxWidth='xl'>
-// 		<Grid container xs={12}>
-// 			<IconButton
-// 				aria-label='close'
-// 				onClick={() => {
-// 					console.log(history);
-// 					history.push('/');
-// 					dispatch(showLayoutAction(true));
-// 				}}
-// 			>
-// 				<ArrowBackIosIcon style={{ color: 'white' }} />
-// 			</IconButton>
-// 		</Grid>
-// 		<Grid container xs={12}>
-// 			<Grid item xs={3}>
-// 				{/* <Box
-// 					style={{
-// 						padding: '5px',
-// 						width: '100%',
-// 						// height: '350px',
-// 						// backgroundColor: '#8c8c8c',
-// 						display: 'flex',
-// 						flexDirection: 'column',
-// 					}}
-// 				> */}
-// 				{isEmpty(existState2) && (
-// 					<Paper
-// 						style={{
-// 							backgroundColor: 'orange',
-// 							width: '100%',
-// 							height: '300px',
-// 							padding: '5px',
-// 							display: 'flex',
-// 							flexDirection: 'column',
-// 							justifyContent: 'center',
-// 							alignItems: 'center',
-// 						}}
-// 					>
-// 						<Typography variant='h3' color='initial'>
-// 							Sin llamada Actual
-// 						</Typography>
-// 					</Paper>
-// 				)}
-
-// 				{infoTiquets.map(({ name, id, barber, state, service }) => {
-// 					return (
-// 						state === 2 && (
-// 							<Paper
-// 								style={{
-// 									backgroundColor: 'green',
-// 									width: '100%',
-// 									height: '300px',
-// 									padding: '5px',
-// 									display: 'flex',
-// 									flexDirection: 'column',
-// 									justifyContent: 'center',
-// 									alignItems: 'center',
-// 								}}
-// 							>
-// 								<Typography variant='h2' color='initial'>
-// 									N° {id}
-// 								</Typography>
-// 								<Typography variant='h4' color='initial'>
-// 									Cliente: {name}
-// 								</Typography>
-// 								<Typography variant='h4' color='initial'>
-// 									Barbero: {barber}
-// 								</Typography>
-// 								<Typography variant='h4' color='initial'>
-// 									Servicio: {service}
-// 								</Typography>
-// 							</Paper>
-// 						)
-// 					);
-// 				})}
-// 				{/* </Box> */}
-// 			</Grid>
-// 		</Grid>
-// 		<Grid item xs={6}>
-// 			<Typography
-// 				variant='h4'
-// 				color='initial'
-// 				style={{ textAlign: 'center', color: 'white' }}
-// 			>
-// 				Proximas llamadas
-// 			</Typography>
-
-// 			{infoTiquets.map(({ name, state, id }) => {
-// 				return state === 1 ? (
-// 					// <Paper
-// 					// 	// variant='outlined'
-// 					// 	style={{
-// 					// 		backgroundColor: 'yellow',
-
-// 					// 		margin: '10px',
-// 					// 		// maxWidth: '500px',
-// 					// 		width: '100%',
-// 					// 		display: 'flex',
-// 					// 		padding: '10px',
-// 					// 		height: '90px',
-// 					// 		justifyContent: 'center',
-// 					// 		alignItems: 'center',
-// 					// 	}}
-// 					// >
-// 					<>
-// 						<Box className={classes.boxContainer}>
-// 							<Typography variant='h5' color='initial'>
-// 								{id}
-// 							</Typography>
-// 							<Box display='flex' flexWrap='wrap' alignItems='center'>
-// 								<Typography variant='h6' color='initial'>
-// 									Barbero: {name}
-// 								</Typography>
-// 							</Box>
-// 						</Box>
-// 						<Avatar className={classes.avatarContainer}>
-// 							<InfoIcon classes={{ root: classes.iconInfo }} />
-// 						</Avatar>
-// 						{/* </Paper> */}
-// 					</>
-// 				) : null;
-// 			})}
-// 		</Grid>
-// 		<Grid item xs={12}>
-// 			<Grid item xs={6}>
-// 				<Typography
-// 					variant='h4'
-// 					color='initial'
-// 					style={{ textAlign: 'center', color: 'white' }}
-// 				>
-// 					Ultimas llamadas
-// 				</Typography>
-
-// 				{infoTiquets.map(({ name, state, id }) => {
-// 					return state === 0 ? (
-// 						<Paper
-// 							// variant='outlined'
-// 							style={{
-// 								backgroundColor: 'red',
-
-// 								margin: '10px',
-// 								maxWidth: '500px',
-// 								width: '100%',
-// 								display: 'flex',
-// 								padding: '10px',
-// 								height: '90px',
-// 								justifyContent: 'center',
-// 								alignItems: 'center',
-// 							}}
-// 						>
-// 							<Box className={classes.boxContainer}>
-// 								<Typography variant='h5' color='initial'>
-// 									{id}
-// 								</Typography>
-// 								<Box display='flex' flexWrap='wrap' alignItems='center'>
-// 									<Typography variant='h6' color='initial'>
-// 										Barbero: {name}
-// 									</Typography>
-// 								</Box>
-// 							</Box>
-// 							<Avatar className={classes.avatarContainer}>
-// 								<CheckCircleIcon classes={{ root: classes.checkInfo }} />
-// 							</Avatar>
-// 						</Paper>
-// 					) : null;
-// 				})}
-// 			</Grid>
-// 		</Grid>
-// 	</Container>
-// </div>

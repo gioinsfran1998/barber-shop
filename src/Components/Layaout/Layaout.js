@@ -279,7 +279,7 @@ const Layout = (props) => {
 	return (
 		<>
 			{showLayout && (
-				<div className={classes.root}>
+				<div>
 					<CssBaseline />
 
 					<AppBar
@@ -302,6 +302,8 @@ const Layout = (props) => {
 const useStyles = makeStyles((theme) => ({
 	root: {
 		display: 'flex',
+
+		marginTop: '20px',
 	},
 }));
 
