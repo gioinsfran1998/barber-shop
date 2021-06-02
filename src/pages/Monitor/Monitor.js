@@ -17,6 +17,8 @@ import {
 	Toolbar,
 	Typography,
 } from '@material-ui/core';
+import { db } from '../../firebase';
+import Timer from '../../Components/Timer/Timer';
 
 const useStyles = makeStyles((theme) => ({
 	container: {
@@ -71,6 +73,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+export const streamTickets = (observer) => {
+	return db.collection('tickets').onSnapshot(observer);
+};
+
 // Filter state == 2
 
 /*
@@ -103,23 +109,29 @@ const ticketColor = [
 	},
 ];
 
-const getCurrentTime = () => {
-	const now = new Date();
-
-	const time = [now.getHours(), now.getMinutes(), now.getSeconds()]
-		.map((item) => item.toString().padStart(2, '0'))
-		.join(':');
-
-	return time;
-};
-
 const Monitor = () => {
-	const [dateTime, setDateTime] = useState(getCurrentTime());
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const classes = useStyles();
+	const [tickets, setTickets] = useState([]);
 
 	const [stateBox, setStateBox] = useState(3);
+
+	useEffect(() => {
+		const unsubscribe = streamTickets({
+			next: (querySnapshot) => {
+				const updateTickets = querySnapshot.docs.map((docSnapshot) => {
+					return { ...docSnapshot.data(), id: docSnapshot.id };
+				});
+
+				setTickets(updateTickets);
+			},
+			error: () => console.log('grocery-list-item-get-fail'),
+		});
+
+		return unsubscribe;
+	}, []);
+	console.log(tickets);
 
 	const infoTiquets = [
 		{
@@ -166,15 +178,9 @@ const Monitor = () => {
 		},
 	];
 
-	const existState2 = infoTiquets.filter((ticket) => {
+	const existState2 = tickets.filter((ticket) => {
 		return ticket.state === 1;
 	});
-
-	useEffect(() => {
-		const timer = setInterval(() => setDateTime(getCurrentTime()), 1000);
-
-		return () => clearInterval(timer);
-	}, []);
 
 	return (
 		<Box
@@ -190,7 +196,6 @@ const Monitor = () => {
 				<IconButton
 					aria-label='close'
 					onClick={() => {
-						console.log(history);
 						history.push('/');
 						dispatch(showLayoutAction(true));
 					}}
@@ -202,12 +207,7 @@ const Monitor = () => {
 				<Button variant='contained'>Llamar</Button>
 				<Button variant='contained'>Pendiente</Button>
 
-				<Typography
-					variant='h6'
-					style={{ paddingRight: '40px', color: 'white' }}
-				>
-					{dateTime}
-				</Typography>
+				<Timer />
 			</Box>
 			<Container maxWidth='xl' style={{ height: '100%', padding: '20px' }}>
 				<Paper
@@ -263,7 +263,7 @@ const Monitor = () => {
 									</Typography>
 								</Paper>
 							)}
-							{infoTiquets.map(({ name, id, barber, state, service }) => {
+							{tickets.map(({ name, id, state, barber, service, number }) => {
 								return (
 									state === 1 && (
 										<Paper
@@ -281,8 +281,8 @@ const Monitor = () => {
 												alignItems: 'center',
 											}}
 										>
-											<Typography variant='h3' color='secondary'>
-												N° {id}
+											<Typography variant='h6' color='secondary'>
+												N° {number}
 											</Typography>
 											<Typography variant='h6' color='secondary'>
 												Cliente: {name}
@@ -362,7 +362,7 @@ const Monitor = () => {
 								</Box>
 							</Box>
 
-							{infoTiquets.map(({ name, state, id }) => {
+							{tickets.map(({ name, id, state, barber, service, number }) => {
 								return (
 									<Paper
 										variant='outlined'
@@ -394,7 +394,7 @@ const Monitor = () => {
 													paddingLeft: '40px',
 												}}
 											>
-												{id}
+												{number}
 											</Typography>
 										</Box>
 										<Box style={{ width: '50%' }}>

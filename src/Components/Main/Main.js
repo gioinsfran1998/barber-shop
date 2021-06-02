@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles, Container, Box } from '@material-ui/core';
 import BreadCrumb from '../Breadcrumb/BreadCrumb';
 import Layaout from '../Layaout/Layaout';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { showLayoutAction } from '../../redux/enviroment';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -30,10 +32,34 @@ const useStyles = makeStyles((theme) => ({
 const Main = ({ children, logged }) => {
 	const classes = useStyles();
 	const user = useSelector((state) => state.user.user);
+	const dispatch = useDispatch();
+
 	const showLayout = useSelector((store) => store.enviroment.showLayout);
+	const [show, setShow] = useState(true);
+
+	const location = useLocation();
+	const { pathname } = location;
+
+	useEffect(() => {
+		if (pathname === '/monitor') {
+			dispatch(showLayoutAction(false));
+			setShow(false);
+			console.log('igual a /monitor');
+			return;
+		}
+
+		if (pathname !== '/monitor') {
+			dispatch(showLayoutAction(true));
+			setShow(true);
+			return;
+		}
+	}, [showLayout]);
+
+	console.log('show', showLayout, '==>', location.pathname);
+
 	return (
 		<div className={classes.root}>
-			{user && <Layaout />}
+			{showLayout && <Layaout />}
 
 			{showLayout ? (
 				<div className={classes.backgroundMain}>

@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 const Profile = () => {
-	const user = useSelector((state) => state.user.user);
+	const user = useSelector((state) => state.user.user) || {};
 
 	const classes = useStyles();
 	const theme = useTheme();
