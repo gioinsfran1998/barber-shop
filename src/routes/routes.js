@@ -5,6 +5,7 @@ import userAdd from '../pages/Users/Add';
 import userEdit from '../pages/Users/Edit';
 import userDetails from '../pages/Users/Details';
 import Monitor from '../pages/Monitor/Monitor';
+import Shifts from '../pages/Shifts/Shifts';
 
 export const RoutesPublic = [
 	{
@@ -47,6 +48,11 @@ export const RoutesPrivates = [
 	{
 		path: '/monitor',
 		Component: Monitor,
+		exact: true,
+	},
+	{
+		path: '/shifts',
+		Component: Shifts,
 		exact: true,
 	},
 ];

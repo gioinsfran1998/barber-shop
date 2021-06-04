@@ -44,7 +44,7 @@ const Main = ({ children, logged }) => {
 		if (pathname === '/monitor') {
 			dispatch(showLayoutAction(false));
 			setShow(false);
-			console.log('igual a /monitor');
+
 			return;
 		}
 
@@ -54,8 +54,6 @@ const Main = ({ children, logged }) => {
 			return;
 		}
 	}, [showLayout]);
-
-	console.log('show', showLayout, '==>', location.pathname);
 
 	return (
 		<div className={classes.root}>

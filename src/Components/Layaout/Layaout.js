@@ -20,6 +20,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import DesktopWindowsIcon from '@material-ui/icons/DesktopWindows';
+import InputIcon from '@material-ui/icons/Input';
 
 import { useHistory, withRouter, useLocation } from 'react-router-dom';
 
@@ -190,6 +191,16 @@ const Layout = (props) => {
 			icon: <DesktopWindowsIcon />,
 			onClick: () => {
 				history.push('/monitor');
+				setMobileOpen(false);
+				dispatch(showLayoutAction(false));
+			},
+		},
+		{
+			text: 'Control',
+			route: '/shifts',
+			icon: <InputIcon />,
+			onClick: () => {
+				history.push('/shifts');
 				setMobileOpen(false);
 				dispatch(showLayoutAction(false));
 			},

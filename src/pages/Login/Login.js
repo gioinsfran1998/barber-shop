@@ -13,6 +13,7 @@ import loginImage from '../../assets/images/barber6.jpg';
 import gmailIcon from '../../assets/images/logingoogle.png';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../../redux/user';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -101,6 +102,11 @@ export const getUsersRole = async (email) => {
 const Login = (props) => {
 	const classes = useStyles();
 	const dispatch = useDispatch();
+	const { enqueueSnackbar } = useSnackbar();
+
+	const handleClickPopUp = (variant, message) => {
+		enqueueSnackbar(message, { variant });
+	};
 
 	const onLogin = () => {
 		const provider = new firebase.auth.GoogleAuthProvider();
@@ -116,11 +122,12 @@ const Login = (props) => {
 						dispatch(loginUser({ displayName, email, photoURL, uid }));
 					} else {
 						console.log('usuario no autorizado.');
-						// handleClickPopUp("error", "Usuario no autorizado");
+
+						handleClickPopUp('error', 'Usuario no autorizado');
 					}
 				} else {
 					console.log('user no exist, cadastrar pfv');
-					// handleClickPopUp("error", "No existe usuario");
+					handleClickPopUp('error', 'No existe usuario');
 				}
 			})
 			.catch((error) => {
