@@ -6,6 +6,7 @@ import { isEmpty } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showLayoutAction } from '../../redux/enviroment';
+import { useDebouncedCallback } from 'use-debounce';
 
 import {
 	Box,
@@ -14,8 +15,8 @@ import {
 	IconButton,
 	makeStyles,
 	Paper,
-	Toolbar,
 	Typography,
+	CircularProgress,
 } from '@material-ui/core';
 import { db } from '../../firebase';
 import Timer from '../../Components/Timer/Timer';
@@ -71,6 +72,13 @@ const useStyles = makeStyles((theme) => ({
 		marginLeft: '5px',
 		flexGrow: 1,
 	},
+	wrapper: {
+		display: 'flex',
+		flexDirection: 'column',
+		width: '100%',
+		minHeight: '100%',
+		// backgroundColor: 'red',
+	},
 }));
 
 export const streamTickets = (observer) => {
@@ -109,13 +117,17 @@ const ticketColor = [
 	},
 ];
 
+const debounceTime = 1500;
+
 const Monitor = () => {
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const classes = useStyles();
 	const [tickets, setTickets] = useState([]);
-
+	const [loading, setLoading] = useState(true);
 	const [stateBox, setStateBox] = useState(3);
+
+	const debounce = useDebouncedCallback((fn) => fn(), debounceTime);
 
 	useEffect(() => {
 		const unsubscribe = streamTickets({
@@ -125,13 +137,20 @@ const Monitor = () => {
 				});
 
 				setTickets(updateTickets);
+				debounce(() => {
+					setLoading(false);
+				});
 			},
-			error: () => console.log('grocery-list-item-get-fail'),
+			error: () => {
+				alert('Comunicar con soporte');
+				debounce(() => {
+					setLoading(false);
+				});
+			},
 		});
 
 		return unsubscribe;
 	}, []);
-	console.log(tickets);
 
 	const infoTiquets = [
 		{
@@ -183,15 +202,7 @@ const Monitor = () => {
 	});
 
 	return (
-		<Box
-			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				width: '100%',
-				minHeight: '100%',
-				// backgroundColor: 'red',
-			}}
-		>
+		<Box className={classes.wrapper}>
 			<Box className={classes.container}>
 				<IconButton
 					aria-label='close'
@@ -242,7 +253,9 @@ const Monitor = () => {
 								flexWrap: 'wrap',
 							}}
 						>
-							{isEmpty(existState2) && (
+							{loading && <CircularProgress />}
+
+							{isEmpty(existState2) && !loading && (
 								<Paper
 									style={{
 										margin: '10px',
@@ -263,40 +276,42 @@ const Monitor = () => {
 									</Typography>
 								</Paper>
 							)}
-							{tickets.map(({ name, id, state, barber, service, number }) => {
-								return (
-									state === 1 && (
-										<Paper
-											style={{
-												margin: '10px',
-												backgroundColor: 'red',
-												minWidth: '200px',
-												maxWidth: '300px',
-												width: '100%',
-												height: '300px',
-												padding: '5px',
-												display: 'flex',
-												flexDirection: 'column',
-												justifyContent: 'center',
-												alignItems: 'center',
-											}}
-										>
-											<Typography variant='h6' color='secondary'>
-												N° {number}
-											</Typography>
-											<Typography variant='h6' color='secondary'>
-												Cliente: {name}
-											</Typography>
-											<Typography variant='h6' color='secondary'>
-												Barbero: {barber}
-											</Typography>
-											<Typography variant='h6' color='secondary'>
-												Servicio: {service}
-											</Typography>
-										</Paper>
-									)
-								);
-							})}
+
+							{!loading &&
+								tickets.map(({ name, id, state, barber, service, number }) => {
+									return (
+										state === 1 && (
+											<Paper
+												style={{
+													margin: '10px',
+													backgroundColor: 'red',
+													minWidth: '200px',
+													maxWidth: '300px',
+													width: '100%',
+													height: '300px',
+													padding: '5px',
+													display: 'flex',
+													flexDirection: 'column',
+													justifyContent: 'center',
+													alignItems: 'center',
+												}}
+											>
+												<Typography variant='h6' color='secondary'>
+													N° {number}
+												</Typography>
+												<Typography variant='h6' color='secondary'>
+													Cliente: {name}
+												</Typography>
+												<Typography variant='h6' color='secondary'>
+													Barbero: {barber}
+												</Typography>
+												<Typography variant='h6' color='secondary'>
+													Servicio: {service}
+												</Typography>
+											</Paper>
+										)
+									);
+								})}
 						</Paper>
 					</Box>
 					<Box
