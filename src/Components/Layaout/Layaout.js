@@ -21,6 +21,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import DesktopWindowsIcon from '@material-ui/icons/DesktopWindows';
 import InputIcon from '@material-ui/icons/Input';
+import NoteAddOutlinedIcon from '@material-ui/icons/NoteAddOutlined';
 
 import { useHistory, withRouter, useLocation } from 'react-router-dom';
 
@@ -201,6 +202,16 @@ const Layout = (props) => {
 			icon: <InputIcon />,
 			onClick: () => {
 				history.push('/shifts');
+				setMobileOpen(false);
+				dispatch(showLayoutAction(false));
+			},
+		},
+		{
+			text: 'Ticket',
+			route: '/ticket',
+			icon: <NoteAddOutlinedIcon />,
+			onClick: () => {
+				history.push('/ticket');
 				setMobileOpen(false);
 				dispatch(showLayoutAction(false));
 			},

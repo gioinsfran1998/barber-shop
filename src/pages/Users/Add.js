@@ -638,3 +638,106 @@ const Add = () => {
 };
 
 export default Add;
+
+/*
+
+			<Box className={classes.wrapper}>
+				<Box className={classes.appBar}>
+					<IconButton
+						aria-label='close'
+						onClick={() => {
+							history.push('/');
+							dispatch(showLayoutAction(true));
+						}}
+					>
+						<ArrowBackIosIcon style={{ color: 'white' }} />
+					</IconButton>
+
+					<Timer />
+				</Box>
+				<Container maxWidth='lg' style={{ height: '100%', padding: '20px' }}>
+					<Paper variant='outlined' className={classes.paperContainer}>
+						<Grid
+							container
+							justify='flex-start'
+							alignItems='center'
+							spacing={1}
+						>
+							<Grid item xs={12} style={{ marginBottom: '10px' }}>
+								<Typography
+									variant='h5'
+									color='initial'
+									style={{ paddingLeft: '10px' }}
+								>
+									Agregar Usuario
+								</Typography>
+							</Grid>
+
+							<Grid item lg={4} sm={6} xs={12}>
+								<Box p={3}>
+									<TextField
+										label='Nombres'
+										fullWidth
+										variant='outlined'
+										required
+										name='name'
+										id='name'
+										// type='text'
+										// value={values.name}
+										// onChange={handleChange}
+										// error={errors.name && touched.name && errors.name}
+										// helperText={errors.name && touched.name && errors.name}
+										// onBlur={handleBlur}
+									/>
+								</Box>
+							</Grid>
+
+							<Grid item lg={4} sm={6} xs={12}>
+								<Box p={3}>
+									<TextField
+										label='Apellidos'
+										fullWidth
+										variant='outlined'
+										required
+										name='lastName'
+										id='lastName'
+										type='text'
+										// value={values.lastName}
+										// onChange={handleChange}
+										// error={errors.lastName && touched.lastName && errors.lastName}
+										// helperText={
+										// 	errors.lastName && touched.lastName && errors.lastName
+										// }
+										// onBlur={handleBlur}
+									/>
+								</Box>
+							</Grid>
+
+							<Grid item sm={6} xs={12} lg={4}>
+								<Box p={3} display='block'>
+									<TextField
+										className={classes.textFieldAdd}
+										InputLabelProps={{
+											className: classes.textFieldInputProps,
+										}}
+										id='email'
+										name='email'
+										required
+										fullWidth
+										variant='outlined'
+										label='Email'
+										// value={values.email}
+										// onChange={handleChange}
+										// error={errors.email && touched.email && errors.email}
+										// helperText={errors.email && touched.email && errors.email}
+										// onBlur={handleBlur}
+									/>
+								</Box>
+							</Grid>
+						</Grid>
+					</Paper>
+				</Container>
+			</Box>
+
+
+*/

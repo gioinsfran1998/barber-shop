@@ -39,6 +39,7 @@ const Main = ({ children, logged }) => {
 
 	const location = useLocation();
 	const { pathname } = location;
+	console.log(pathname);
 
 	useEffect(() => {
 		if (pathname === '/monitor') {
@@ -47,8 +48,20 @@ const Main = ({ children, logged }) => {
 
 			return;
 		}
+		if (pathname === '/ticket') {
+			dispatch(showLayoutAction(false));
+			setShow(false);
+
+			return;
+		}
 
 		if (pathname !== '/monitor') {
+			dispatch(showLayoutAction(true));
+			setShow(true);
+			return;
+		}
+
+		if (pathname !== '/ticket') {
 			dispatch(showLayoutAction(true));
 			setShow(true);
 			return;

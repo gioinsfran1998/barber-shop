@@ -118,7 +118,7 @@ const Shifts = () => {
 					<IconButton
 						color='primary'
 						aria-label='edit'
-						// onClick={() => handleEditUser(params)}
+						onClick={() => handleCancelTicket(params)}
 					>
 						<CancelOutlinedIcon />
 					</IconButton>
@@ -137,7 +137,25 @@ const Shifts = () => {
 			})
 			.then(() => {
 				console.log('Ok Editado!!!');
-				// handleClickPopUp('success', 'Llamando a ');
+				handleClickPopUp('success', `Llamando a ${row.name} `);
+			})
+			.catch(() => {
+				console.log('CATCHH');
+				// setLoading(false);
+			});
+	};
+
+	const handleCancelTicket = async ({ row }) => {
+		console.log(row.state);
+		await db
+			.collection('tickets')
+			.doc(row.id)
+			.update({
+				state: 0,
+			})
+			.then(() => {
+				console.log('Ok Editado!!!');
+				handleClickPopUp('error', 'Ticket Cancelado !!');
 			})
 			.catch(() => {
 				console.log('CATCHH');

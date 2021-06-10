@@ -97,25 +97,37 @@ export const streamTickets = (observer) => {
 
 */
 
-const ticketColor = [
-	{
-		state: 0,
-		backgroundColor: 'yellow',
-	},
-	{
-		state: 1,
-		backgroundColor: 'red',
-		color: 'white',
-	},
-	{
-		state: 2,
-		backgroundColor: 'green',
-	},
-	{
-		state: 3,
-		backgroundColor: 'orange',
-	},
-];
+// const ticketColor = [
+// 	{
+// 		state: 0,
+// 		backgroundColor: 'yellow',
+// 	},
+// 	{
+// 		state: 1,
+// 		backgroundColor: 'red',
+// 		color: 'white',
+// 	},
+// 	{
+// 		state: 2,
+// 		backgroundColor: 'green',
+// 	},
+// 	{
+// 		state: 3,
+// 		backgroundColor: 'orange',
+// 	},
+// ];
+
+const handleGetColor = (state) => {
+	switch (state) {
+		case 0:
+			return 'yellow';
+
+		case 1:
+			return 'red';
+
+		default:
+	}
+};
 
 const debounceTime = 1500;
 
@@ -152,51 +164,6 @@ const Monitor = () => {
 		return unsubscribe;
 	}, []);
 
-	const infoTiquets = [
-		{
-			id: '345334',
-			name: 'Juan Roman',
-			service: 'Corte',
-			barber: 'Jorge Gauto',
-			state: 0,
-		},
-		{
-			id: '415234',
-			name: 'Victor Rolon Espinola',
-			service: 'Corte y Ceja',
-			barber: 'Miguel Lopez ',
-			state: 0,
-		},
-		{
-			id: '23203',
-			name: 'Jamon Jonas',
-			service: 'Corte',
-			barber: 'Jorge Gauto',
-			state: 0,
-		},
-		{
-			id: '415234',
-			name: 'Victor Rolon',
-			service: 'Corte y Ceja',
-			barber: 'Miguel Lopez',
-			state: 2,
-		},
-		{
-			id: '145234',
-			name: 'Walter Pereira',
-			service: 'Ceja',
-			barber: 'Jonas Guiterres',
-			state: 2,
-		},
-		{
-			id: '23231',
-			name: 'Gusti Lomaquiz',
-			service: 'Ceja',
-			barber: 'Jonas Guiterres',
-			state: stateBox,
-		},
-	];
-
 	const existState2 = tickets.filter((ticket) => {
 		return ticket.state === 1;
 	});
@@ -213,10 +180,6 @@ const Monitor = () => {
 				>
 					<ArrowBackIosIcon style={{ color: 'white' }} />
 				</IconButton>
-
-				<Button variant='contained'>Cancelar</Button>
-				<Button variant='contained'>Llamar</Button>
-				<Button variant='contained'>Pendiente</Button>
 
 				<Timer />
 			</Box>
@@ -384,15 +347,15 @@ const Monitor = () => {
 										style={{
 											margin: '10px',
 											transition: 'background-color 0.5s ease',
-											backgroundColor:
-												ticketColor[state].backgroundColor || 'inherit',
+											backgroundColor: handleGetColor(state),
+											// ticketColor[state].backgroundColor || 'inherit',
 											// backgroundColor: 'green',
-											opacity: state === 1 ? 0 : 2,
+											// opacity: state === 1 ? 0 : 2,
 											// opacity: state === 1 ? 0 : 2,
 											// transition de agregar/quitar
-											transition: 'opacity 1s ease',
+											// transition: 'opacity 1s ease',
 
-											color: ticketColor[state].color || 'inherit',
+											// color: ticketColor[state].color || 'inherit',
 											display: 'flex',
 											alignItems: 'center',
 											height: '80px',

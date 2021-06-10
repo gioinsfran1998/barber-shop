@@ -6,6 +6,7 @@ import userEdit from '../pages/Users/Edit';
 import userDetails from '../pages/Users/Details';
 import Monitor from '../pages/Monitor/Monitor';
 import Shifts from '../pages/Shifts/Shifts';
+import Ticket from '../pages/Ticket/Ticket';
 
 export const RoutesPublic = [
 	{
@@ -53,6 +54,11 @@ export const RoutesPrivates = [
 	{
 		path: '/shifts',
 		Component: Shifts,
+		exact: true,
+	},
+	{
+		path: '/ticket',
+		Component: Ticket,
 		exact: true,
 	},
 ];
